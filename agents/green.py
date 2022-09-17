@@ -33,7 +33,7 @@ class green:
         If there are no more neighbours that isnt in array; go onto the onto the next node
     
     Once every node is in the visited array:
-    End of round, ALL visited status gets reset to unvisited
+    End of round, ALL visited status gets reset to unvisited, array is reset
     '''
 
     #potential internet literacy, a probability(?) that affects whether or not theyre affected by the red team's message
