@@ -16,7 +16,7 @@ class green:
     
     Undirected 
     
-    In graph, we loop through each node
+    In graph, we loop through each node DFS STACK
         For each node, we will loop through ALL of their adjacent neighbours 
         Change the node's visited status to visited
         abs(x) and abs(y)
