@@ -22,26 +22,18 @@ class green:
         abs(x) and abs(y)
         if x < y:
             y affects x's opinion and uncertainty changes 
+            add to visisted array
 
         Elif x > y:
             x affects y's opinion and uncertainty changes 
-            Add to 
+            Add to visited array
         Else:
         nothing
-        If there are any more adjacent neighbours that hasnt been visited loop continues to next node thats connected
-        If there are no more neighbours; go onto the onto the next node
+        If there are any more adjacent neighbours that hasnt been visited, loop continues to next node thats connected
+        If there are no more neighbours that isnt in array; go onto the onto the next node
     
-
-    Once every node is in the visited array
-        
-
-    
-    
-    (whichever one is on the further end, add one to every value) when changing the undercertainty, you change the stance/opinion
-    (two red nodes = more certain, less certain one becomes more red)
-    only one node gets influenced
-
-    End of round
+    Once every node is in the visited array:
+    End of round, ALL visited status gets reset to unvisited
     '''
 
     #potential internet literacy, a probability(?) that affects whether or not theyre affected by the red team's message
@@ -51,4 +43,7 @@ class green:
     If  current node(x) is (((0-X) < (0-Y)) < ((2-X) < (2-Y)))   [more closer to 0 or closer to 2 than the other node]:
          Then the other node's(Y) opinion becomes swayed to more certain to vote(blue side)
     Elif same thing but other direction: X opionion has changed
-    else: nothing changed'''
+    else: nothing changed
+    (whichever one is on the further end, add one to every value) when changing the undercertainty, you change the stance/opinion
+    (two red nodes = more certain, less certain one becomes more red)
+    only one node gets influenced'''
