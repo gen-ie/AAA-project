@@ -1,0 +1,66 @@
+Questions: 
+	1. When two green agents interact with each other, would/how do they affect each other
+	2. how many agents does blue affect at once
+	3. "followers lost(fixed)" or "risk(percentage)" with red propaganda
+
+
+Green class:
+	1. Initialization:
+		a. Uncertainty: randomised between -1.0  to 1.0
+        b. Opinion: randomised between "for voting"(-1.0) and "against voting"(1.0)
+
+	2. Talking to neighbouring green node:
+        ???
+
+
+Red class (player):
+    variables:
+        risk = how likely uncertainty will decrease (agent more likely to vote)
+        effectiveness = how likely uncertainty will increase (agent less likely to vote)
+        potency = how much uncertainty will increase 
+
+    1. Level 1 propaganda -
+        interact: uncertainty -0.6 and above
+		    potency:0.1
+    2. Level 2 propaganda -
+        interact: uncertainty -0.4 and above
+        potency:0.2
+    3. Level 3 propaganda -
+        interact: uncertainty -0.2 and above
+        potency:0.3
+    4. Level 4 propaganda -
+        interact: uncertainty 0 and above
+        potency:0.4
+    5. Level 5 propaganda -
+        interact: uncertainty 0.2 and above
+        potency:0.5
+
+Blue class (player):
+    max energy = 50
+    should only interact with agents with lower uncertainties 
+    occasionally dispatches gray agent
+
+    variables:
+        potency = how much uncertainty will decrease
+        energy cost = amount of energy lost per interaction
+
+    1. Level 1 counter-propaganda -
+		potency = -0.1
+        energy cost = 1
+    2. Level 2 counter-propaganda -
+	    potency = -0.2
+        energy cost = 2
+    3. Level 3 counter-propaganda -
+	    potency = -0.3
+        energy cost = 3
+    4. Level 4 counter-propaganda -
+	    potency = -0.4 
+        energy cost = 4
+    5. Level 5 counter-propaganda -
+		potency = -0.5 
+        energy cost = 5 
+
+Gray class:
+    1. Initialization: affiliation: red or blue (randomised - 50/50??)
+    2. mimics actions of team it is affiliated with (but without consequence)
+    3. messages sent out would have randomised potencies
