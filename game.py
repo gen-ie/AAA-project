@@ -2,9 +2,7 @@ import random
 import csv
 
 def create_graph(network_file, green_array):
-    '''
-    create a adjacency lists of green nodes
-    '''
+    # create a adjacency lists of green nodes
     graph = {}
     with open(network_file) as network:
         connection = csv.reader(network)
@@ -20,6 +18,7 @@ def create_graph(network_file, green_array):
     network.close()
     return graph
 
+
 def initialise():
     # welcome message
     print("insert welcome message")
@@ -28,17 +27,17 @@ def initialise():
         player_agent = input("Please choose an agent (r or b): ")
         if player_agent.strip().lower() in ["r", "b"]:
             break
-        print("Invalid output. Please try again")
+        print("Invalid output. Please try again\n")
     
     ai_agent = "b"    
-    if player_agent.lower() == "b":
-        ai_agent = "a"
+    if player_agent.strip().lower() == "b":
+        ai_agent = "r"
 
     # validation of inputs
     print("\nPlease state the following parameters")
     while True:
         grayPercent = input("Percentage of gray working for blue (between 0-1): ")
-        if float(grayPercent) >= 0 and float(grayPercent) <= 1:
+        if float(grayPercent.strip().lower()) >= 0 and float(grayPercent.strip().lower()) <= 1:
             break
         print("Invalid output. Please try again\n")
     
@@ -46,19 +45,19 @@ def initialise():
         min_interval = input("Minimum interval (between -1 and 1): ")
         max_interval = input("Maximum interval (between -1 and 1): ")
 
-        if (float(min_interval) >= -1) and (float(min_interval) <= 1) and (float(max_interval) >= -1) and (float(max_interval) <= 1):
-            if (float(min_interval) < float(max_interval)):
+        if (float(min_interval.strip().lower()) >= -1) and (float(min_interval.strip().lower()) <= 1) and (float(max_interval.strip().lower()) >= -1) and (float(max_interval.strip().lower()) <= 1):
+            if (float(min_interval.strip().lower()) < float(max_interval.strip().lower())):
                 break
         print("Invalid output. Please try again\n")
     
     while True:
         vote_percent = input("Percentage of people willing to vote (between 0-1): ")
-        if float(vote_percent) >= 0 and float(vote_percent) <= 1:
+        if float(vote_percent.strip().lower()) >= 0 and float(vote_percent.strip().lower()) <= 1:
             break
         print("Invalid output. Please try again\n")
     while True:
         num_rounds = input("Number of days before election day (positive numbers only): ")
-        if int(num_rounds) > 0:
+        if int(num_rounds.strip().lower()) > 0:
             break
         print("Invalid output. Please try again\n")
 
@@ -68,7 +67,50 @@ def initialise():
 
 
 
-def simulation(grayPercent, interval, num_rouds, vote_percent, player, ai): 
+def simulation(grayPercent, interval, num_rounds, vote_percent, player, ai): 
+    rounds = ["red", "green", "blue"] * num_rounds
+
+    # counters
+    for_voting = 0
+    against_voting = 0 
+
+    for r in rounds:
+        # check if blue ran out of energy or red ran out of followers
+        if winning():
+            # return name of winning agent 
+            break
+
+        else:
+            if r == "red":
+                if player == "r":
+                    # execute player interactive function
+                    # print number of followers
+                elif ai == "r":
+                    # execute minimax(?) function 
+                # print percentage of people wanting to vote/ against voting 
+            
+            elif r == "blue":
+                if player == "b":
+                    # execute player interactive function
+                    # print remaing energy amount 
+                elif ai == "b":
+                    # execute minimax(?) function 
+                # print percentage of people wanting to vote/ against voting 
+            
+            elif r == "green":
+                # interaction function (dfs?)
+                # print percentage of people wanting to vote/ against voting 
+        
+    # election day 
+    winner = max(for_voting, against_voting)
+    if winner == for_voting:
+        print("Blue wins!!\n")
+    elif winer == against_voting:
+        print("Red wins!!\n")
+    else:
+        print("It's a draw\n")
+
+
     
     '''runs the game until either a) win condition is met or b) all rounds have been executed'''
     '''
