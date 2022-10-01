@@ -3,13 +3,22 @@ import csv
 
 def create_graph(network_file, green_array):
     '''
-    create a matrix of green nodes
+    create a adjacency lists of green nodes
     '''
-    graph = []
+    graph = {}
     with open(network_file) as network:
-        connection = csv.reader(network_file)
+        connection = csv.reader(network)
+
         for c in connection:
-            con = connection.split(",")
+            if ("node" not in c[0]):
+                if (int(c[0]) not in graph):
+                    graph[int(c[0])] = [int(c[1])]
+                elif (int(c[0]) in graph)  and (int(c[1]) not in graph[int(c[0])]):
+                    adj = graph[int(c[0])]
+                    adj.append(int(c[1]))
+                    graph[int(c[0])] = adj
+    network.close()
+    return graph
 
 def initialise():
     # welcome message
@@ -25,16 +34,34 @@ def initialise():
     if player_agent.lower() == "b":
         ai_agent = "a"
 
-    # start sinulation
+    # validation of inputs
     print("Please state the following parameters")
+    while True:
+        grayPercent = input("Percentage of gray working for blue (between 0-1): ")
+        if grayPercent >= 0 and grayPercent <= 1:
+            break
+        print("Invalid output. Please try again")
+    
+    while True:
+        min_interval = input("Please enter the minimum interval (between -1 and 1): ")
+        max_interval = input("Please enter the minimum interval (between -1 and 1): ")
 
-    grayPercent = input("Percentage of gray working for blue (betwee): ")
-    interval = input("Please enter the intervals (e.g. [-0.3, 0.5] in ranges -1 to 1): ")
-    vote_percent = input("Please enter of people willing to vote (0-1): ")
+        if (min_interval >= -1) and (min_interval <= 1) and (max_interval >= 1) and (max_interval <= 1):
+            if (min_interval < max_interval):
+                break
+        print("Invalid output. Please try again")
+    
+    while True:
+        vote_percent = input("Please enter of people willing to vote (0-1): ")
+        if vote_percent >= 0 and vote_percent <= 1:
+            break
+        print("Invalid output. Please try again")
 
-    simulation(grayPercent, interval, vote_percent)
+    # start simulation
+    # player and ai will have their own colors
+    simulation(grayPercent, [min_interval, max_interval], vote_percent, player_agent, ai_agent)
 
-def simulation(grayPercent, interaval, vote_percent): #params - probability intervals (? uncertainty, gray agent distribution), number of rounds
+def simulation(grayPercent, interaval, vote_percent, player, ai): #params - probability intervals (? uncertainty, gray agent distribution), number of rounds
     '''runs the game until either a) win condition is met or b) all rounds have been executed'''
     '''
     winning conditions
@@ -94,5 +121,5 @@ def simulation(grayPercent, interaval, vote_percent): #params - probability inte
      return winner
     '''
 
-
+create_graph("network-2.csv", [*range(25)])
 
