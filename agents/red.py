@@ -9,13 +9,13 @@ class red:
     def __init__(self, uncertainty):
         self.uncertainty = uncertainty
     
-    def spread_misinformation(graph, agent, message):
+    def spread_misinformation(array_green, agent, message):
         '''
         for green in nodes (loop through all the nodes):
             #effectiveness - if random number is smaller than uncertainty value of agent, spread message to them 
-            eff = round(random.uniform(0.7, 1), 2)
+            eff = round(random.uniform(-0.7, -1), 2)
 
-            if eff < agent:
+            if eff > agent:
                 #change the uncertainty of node
                 green.uncertainty = green.uncertainty + message.potency
                 if green.uncertainty > 1:
@@ -23,3 +23,5 @@ class red:
             else:
                 do nothing, move to next node
         '''
+
+    def minimax():

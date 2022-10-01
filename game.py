@@ -1,6 +1,32 @@
 import random
+import csv
 
-def simulation(): #params - probability intervals (? uncertainty, gray agent distribution), number of rounds
+def create_graph(network_file, green_array):
+    '''
+    create a matrix of green nodes
+    '''
+    graph = []
+    with open(network_file) as network:
+        connection = csv.reader(network_file)
+        for c in connection:
+            con = connection.split(",")
+
+def initialise():
+    # welcome message
+    print("insert welcome message")
+
+    player_agent = input("Please choose an agent (r or b):")
+    ai_agent = "b"
+
+    # check for proper input
+    if (player_agent.lower() != "b") and (player_agent.lower != "a"):
+        return "Invalid output. Please try again"
+    if player_agent.lower() == "b":
+        ai_agent = "a"
+
+    # 
+
+def simulation(grayPercent, interaval, vote_percent, not_vote_percent): #params - probability intervals (? uncertainty, gray agent distribution), number of rounds
     '''runs the game until either a) win condition is met or b) all rounds have been executed'''
     '''
     winning conditions
