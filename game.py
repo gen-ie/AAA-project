@@ -25,7 +25,7 @@ def initialise():
     print("insert welcome message")
 
     while True:
-        player_agent = input("Please choose an agent (r or b):")
+        player_agent = input("Please choose an agent (r or b): ")
         if player_agent.strip().lower() in ["r", "b"]:
             break
         print("Invalid output. Please try again")
@@ -35,33 +35,41 @@ def initialise():
         ai_agent = "a"
 
     # validation of inputs
-    print("Please state the following parameters")
+    print("\nPlease state the following parameters")
     while True:
         grayPercent = input("Percentage of gray working for blue (between 0-1): ")
-        if grayPercent >= 0 and grayPercent <= 1:
+        if float(grayPercent) >= 0 and float(grayPercent) <= 1:
             break
-        print("Invalid output. Please try again")
+        print("Invalid output. Please try again\n")
     
     while True:
-        min_interval = input("Please enter the minimum interval (between -1 and 1): ")
-        max_interval = input("Please enter the minimum interval (between -1 and 1): ")
+        min_interval = input("Minimum interval (between -1 and 1): ")
+        max_interval = input("Maximum interval (between -1 and 1): ")
 
-        if (min_interval >= -1) and (min_interval <= 1) and (max_interval >= 1) and (max_interval <= 1):
-            if (min_interval < max_interval):
+        if (float(min_interval) >= -1) and (float(min_interval) <= 1) and (float(max_interval) >= -1) and (float(max_interval) <= 1):
+            if (float(min_interval) < float(max_interval)):
                 break
-        print("Invalid output. Please try again")
+        print("Invalid output. Please try again\n")
     
     while True:
-        vote_percent = input("Please enter of people willing to vote (0-1): ")
-        if vote_percent >= 0 and vote_percent <= 1:
+        vote_percent = input("Percentage of people willing to vote (between 0-1): ")
+        if float(vote_percent) >= 0 and float(vote_percent) <= 1:
             break
-        print("Invalid output. Please try again")
+        print("Invalid output. Please try again\n")
+    while True:
+        num_rounds = input("Number of days before election day (positive numbers only): ")
+        if int(num_rounds) > 0:
+            break
+        print("Invalid output. Please try again\n")
 
     # start simulation
     # player and ai will have their own colors
-    simulation(grayPercent, [min_interval, max_interval], vote_percent, player_agent, ai_agent)
+    simulation(grayPercent, [min_interval, max_interval], vote_percent, num_rounds, player_agent, ai_agent)
 
-def simulation(grayPercent, interaval, vote_percent, player, ai): #params - probability intervals (? uncertainty, gray agent distribution), number of rounds
+
+
+def simulation(grayPercent, interval, num_rouds, vote_percent, player, ai): 
+    
     '''runs the game until either a) win condition is met or b) all rounds have been executed'''
     '''
     winning conditions
@@ -121,5 +129,6 @@ def simulation(grayPercent, interaval, vote_percent, player, ai): #params - prob
      return winner
     '''
 
-create_graph("network-2.csv", [*range(25)])
+# create_graph("network-2.csv", [*range(25)])
+initialise()
 
