@@ -15,18 +15,26 @@ def initialise():
     # welcome message
     print("insert welcome message")
 
-    player_agent = input("Please choose an agent (r or b):")
-    ai_agent = "b"
-
-    # check for proper input
-    if (player_agent.lower() != "b") and (player_agent.lower != "a"):
-        return "Invalid output. Please try again"
+    while True:
+        player_agent = input("Please choose an agent (r or b):")
+        if player_agent.strip().lower() in ["r", "b"]:
+            break
+        print("Invalid output. Please try again")
+    
+    ai_agent = "b"    
     if player_agent.lower() == "b":
         ai_agent = "a"
 
-    # 
+    # start sinulation
+    print("Please state the following parameters")
 
-def simulation(grayPercent, interaval, vote_percent, not_vote_percent): #params - probability intervals (? uncertainty, gray agent distribution), number of rounds
+    grayPercent = input("Percentage of gray working for blue (betwee): ")
+    interval = input("Please enter the intervals (e.g. [-0.3, 0.5] in ranges -1 to 1): ")
+    vote_percent = input("Please enter of people willing to vote (0-1): ")
+
+    simulation(grayPercent, interval, vote_percent)
+
+def simulation(grayPercent, interaval, vote_percent): #params - probability intervals (? uncertainty, gray agent distribution), number of rounds
     '''runs the game until either a) win condition is met or b) all rounds have been executed'''
     '''
     winning conditions
