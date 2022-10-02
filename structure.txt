@@ -20,20 +20,20 @@ Red class (player):
         potency = how much uncertainty will increase 
 
     1. Level 1 propaganda -
-        interact: uncertainty -0.6 and above
-		    potency:0.1
+        interact: uncertainty 0.8 and below
+		    potency:0.05
     2. Level 2 propaganda -
-        interact: uncertainty -0.4 and above
-        potency:0.2
+        interact: uncertainty 0.6 and below
+        potency:0.1
     3. Level 3 propaganda -
-        interact: uncertainty -0.2 and above
-        potency:0.3
+        interact: uncertainty 0.4 and below
+        potency:0.15
     4. Level 4 propaganda -
-        interact: uncertainty 0 and above
-        potency:0.4
+        interact: uncertainty 0.2 and below
+        potency:0.2
     5. Level 5 propaganda -
-        interact: uncertainty 0.2 and above
-        potency:0.5
+        interact: uncertainty below 0
+        potency:0.25
 
 Blue class (player):
     max energy = 50
@@ -45,19 +45,19 @@ Blue class (player):
         energy cost = amount of energy lost per interaction
 
     1. Level 1 counter-propaganda -
-		potency = -0.1
+		potency = 0.05
         energy cost = 1
     2. Level 2 counter-propaganda -
-	    potency = -0.2
+	    potency = 0.1
         energy cost = 2
     3. Level 3 counter-propaganda -
-	    potency = -0.3
+	    potency = 0.15
         energy cost = 3
     4. Level 4 counter-propaganda -
-	    potency = -0.4 
+	    potency = 0.2
         energy cost = 4
     5. Level 5 counter-propaganda -
-		potency = -0.5 
+		potency = 0.25 
         energy cost = 5 
 
 Gray class:
