@@ -21,7 +21,7 @@ def create_graph(network_file, green_array):
 
 def initialise():
     # welcome message
-    print("insert welcome message")
+    print("insert welcome message\n")
 
     while True:
         player_agent = input("Please choose an agent (r or b): ")
@@ -29,9 +29,12 @@ def initialise():
             break
         print("Invalid output. Please try again\n")
     
-    ai_agent = "b"    
+    ai_agent = "b"  
+    if player_agent.strip().lower() == "r":
+        print("\nrole of red\n")
     if player_agent.strip().lower() == "b":
         ai_agent = "r"
+        print("\ninsert role of blue\n")
 
     # validation of inputs
     print("\nPlease state the following parameters")
@@ -69,6 +72,9 @@ def initialise():
 
 def simulation(grayPercent, interval, num_rounds, vote_percent, player, ai): 
     rounds = ["red", "green", "blue"] * num_rounds
+
+    # create array of green nodes
+    # create graph
 
     # counters
     for_voting = 0
