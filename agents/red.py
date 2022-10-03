@@ -1,9 +1,10 @@
 import random
 
 class propaganda:
-    def __init__(self, interval, potency):
+    def __init__(self, interval, potency, type):
         self.interval = interval
         self.potency = potency
+        self.type = type
 
 class red:
     '''actions for red agent'''
@@ -49,34 +50,45 @@ class red:
         
         max_interval = 0
         potency = 0
+        type = ""
          
         if int(message_choice) == 1:
             max_interval = 0.8
             potency = -0.05
+            type = "Propaganda 1"
         elif int(message_choice) == 2:
             max_interval = 0.6
             potency = -0.1
+            type = "Propaganda 2"
         elif int(message_choice) == 3:
             max_interval = 0.4
             potency = -0.15
+            type = "Propaganda 3"
         elif int(message_choice) == 4:
             max_interval = 0.2
             potency = -0.2
+            type = "Propaganda 4"
         elif int(message_choice) == 5:
             max_interval = 0
             potency = -0.25
+            type = "Propaganda 5"
         
         # create message
-        message = propaganda(max_interval, potency)
+        message = propaganda(max_interval, potency, type)
+        print(f"You have chosen {message.type}!\n")
         # number of interacted followers
         num_follow = self.num_followers(message, green_nodes)
+
         # spread message
         self.spread_misinformation(green_nodes, message)
-
         print(f"You have interacted with {num_follow} nodes")
+        # print stats of overall opinion
 
         
     def red_ai(green_nodes):
+        # minimax
+        # scoring system: number of nodes that do not want to vote
+        # depth; 2-player
         return 1
 
 
