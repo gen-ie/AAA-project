@@ -8,15 +8,15 @@ class propaganda:
 
 class red:
     '''actions for red agent'''
-    def (self, uncertainty):
+    def __init__(self, uncertainty):
         self.uncertainty = uncertainty
     
     def spread_misinformation(self, array_green, message):
         for green in array_green:
             #effectiveness - if random number is smaller than uncertainty value of agent, spread message to them 
-            eff = round(random.uniform(-0.7, -1), 2)
+            # eff = round(random.uniform(-0.7, -1), 2)
 
-            if eff < green.uncertainty:
+            if message.max_interval > green.uncertainty:
                 #change the uncertainty of node
                 green.uncertainty = green.uncertainty + message.potency
                 if green.uncertainty < -1:
@@ -40,7 +40,7 @@ class red:
         print("5: Fear mongering (Indoctrinate the people through scare tactics) - heavily potent message. Can only affect uncertain people (uncertainty of below 0)") 
         print("\n")
 
-        print("Current number of followers: ")
+        print(f"Current number of followers: {len(green_nodes)}\n")
 
         while True:
             message_choice = input("Please type the number of your choice (between 1 to 5): ")
@@ -55,23 +55,23 @@ class red:
         if int(message_choice) == 1:
             max_interval = 0.8
             potency = -0.05
-            type = "Propaganda 1"
+            type = "Speech of Patriotism"
         elif int(message_choice) == 2:
             max_interval = 0.6
             potency = -0.1
-            type = "Propaganda 2"
+            type = "Propaganda"
         elif int(message_choice) == 3:
             max_interval = 0.4
             potency = -0.15
-            type = "Propaganda 3"
+            type = "Conspiracy"
         elif int(message_choice) == 4:
             max_interval = 0.2
             potency = -0.2
-            type = "Propaganda 4"
+            type = "Fake News"
         elif int(message_choice) == 5:
             max_interval = 0
             potency = -0.25
-            type = "Propaganda 5"
+            type = "Fear mongering"
         
         # create message
         message = propaganda(max_interval, potency, type)
