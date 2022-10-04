@@ -1,4 +1,9 @@
 class green:
+
+    def __init__(self, uncertainty, opinion):
+        self.uncertainty = uncertainty
+        self.opinion = opinion
+        
     '''creation of graph network / actions for green agent'''
     '''
 
