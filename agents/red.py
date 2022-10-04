@@ -8,7 +8,7 @@ class propaganda:
 
 class red:
     '''actions for red agent'''
-    def __init__(self, uncertainty):
+    def (self, uncertainty):
         self.uncertainty = uncertainty
     
     def spread_misinformation(self, array_green, message):
@@ -33,11 +33,11 @@ class red:
     def red_player(self, green_nodes):
         print("You have a choice of five types of messages to send out:\n")
 
-        print("1: Propaganda level 1 (name under construction) - tame message. Can affect most people (uncertainty below 0.8)") 
-        print("2: Propaganda level 2 (name under construction) - moderately tame message. Can affect a lot of people (uncertainty below 0.6)") 
-        print("3: Propaganda level 3 (name under construction) - moderately effective message. Can affect some people (uncertainty below 0.4)") 
-        print("4: Propaganda level 4 (name under construction) - highly effective message. Can affect only a handful of certain people (uncertainty below 0.2)") 
-        print("5: Propaganda level 5 (name under construction) - heavily potent message. Can only affect uncertain people (uncertainty of below 0)") 
+        print("1: Speech of Patriotism (Showcase your loyalty to sway people) - tame message. Can affect most people (uncertainty below 0.8)") 
+        print("2: Propaganda (Boast your accomplisments) - moderately tame message. Can affect a lot of people (uncertainty below 0.6)") 
+        print("3: Conspiracy (Suggest ideas to unspecting citizens) - moderately effective message. Can affect some people (uncertainty below 0.4)") 
+        print("4: Fake News (Fabricate evidence in order to succeed) - highly effective message. Can affect only a handful of certain people (uncertainty below 0.2)") 
+        print("5: Fear mongering (Indoctrinate the people through scare tactics) - heavily potent message. Can only affect uncertain people (uncertainty of below 0)") 
         print("\n")
 
         print("Current number of followers: ")
