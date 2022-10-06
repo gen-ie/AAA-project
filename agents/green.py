@@ -19,9 +19,9 @@ class green:
             updated_node = self.change_uncertainty(influenced, value_change)
         elif influencer.opinion == 0:
             updated_node = self.change_uncertainty(influenced, value_change * -1)
-
         return updated_node, influencer
-        
+
+
     def change_uncertainty(self, node, value_change):     #Modifies the uncertainty value of a node
         node.uncertainty += value_change
         # check opinion
@@ -32,23 +32,35 @@ class green:
             node.opinion = 0
         return node
 
-    def interact(graph):    #Acts as green's "turn" when all adjacent green nodes interact with one another
+    def interact(self, graph, green_array):    #Acts as green's "turn" when all adjacent green nodes interact with one another [0 1,2,3,4,8] 0-1 0-2 0-3 0-4 [5,6,7]
         #DFS through the graph
-        #node pairs influence each other
         visited = []
-
-        return None
-
-    def DFS(self, graph, visited, currentnode):     #Navigates through graph and returns an array of node pairs
+        # greenpairs = self.DFS(graph, visited, 0, green_array)
+        #node pairs influence each other
+        for n1 in graph:
+            visited.append(n1) 
+            for n2 in graph[n1]:
+                if n2 not in visited:
+                    updated_node, influencer = self.influence(n1,n2)
+                    if n1 == influencer:
+                        n2 = updated_node
+                    else:
+                        n1 = updated_node
+                    # update green_array
+            # return array of green nodes (updated)
+        return graph
+    '''
+    def DFS(self, graph, visited, currentnode, green_array):     #Navigates through graph and returns an array of node pairs
         neighbours = graph[currentnode]
         v = visited
         
         for n in neighbours:
             if (n not in visited):
-                self.influence(currentnode, n)
+                # update the array
                 v.append(n)
                 self.DFS(graph, v, n)
-        return 
+        return (node1, node2)
+        '''
     
     
     

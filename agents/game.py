@@ -88,6 +88,7 @@ def simulation(grayPercent, interval, num_rounds, vote_percent, player, ai):
 
     # create graph
     graph = create_graph("network-2.csv")
+    print(graph)
     # create array of green nodes
     green_nodes = create_nodes(len(graph))
 
