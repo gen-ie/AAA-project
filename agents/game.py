@@ -1,7 +1,20 @@
-import random
-import csv
+sys.path.append(".")
 
-def create_graph(network_file, green_array):
+import random
+import sys
+import csv
+from green import green
+
+def create_nodes(num_nodes): # returns an array of green nodes
+    green_array = []
+    for i in range(num_nodes):
+        uncertainty = round(random.uniform(-1, 1), 2)
+        opinion = 1 if uncertainty > 0 else 0
+        green_array.append(green(i, uncertainty, opinion))
+    return green_array
+
+
+def create_graph(network_file):
     # create a adjacency lists of green nodes
     graph = {}
     with open(network_file) as network:
@@ -73,48 +86,50 @@ def initialise():
 def simulation(grayPercent, interval, num_rounds, vote_percent, player, ai): 
     rounds = ["red", "blue", "green"] * num_rounds
 
-    # create array of green nodes
     # create graph
+    graph = create_graph("network-2.csv")
+    # create array of green nodes
+    green_nodes = create_nodes(len(graph))
 
     # counters
     for_voting = 0
     against_voting = 0 
 
-    for r in rounds:
-        # check if blue ran out of energy or red ran out of followers
-        if winning():
-            # return name of winning agent 
-            break
+    # for r in rounds:
+    #     # check if blue ran out of energy or red ran out of followers
+    #     if winning():
+    #         # return name of winning agent 
+    #         break
 
-        else:
-            if r == "red":
-                if player == "r":
-                    # execute player interactive function
-                    # print number of followers
-                elif ai == "r":
-                    # execute minimax(?) function 
-                # print percentage of people wanting to vote/ against voting 
+    #     else:
+    #         if r == "red":
+    #             if player == "r":
+    #                 # execute player interactive function
+    #                 # print number of followers
+    #             elif ai == "r":
+    #                 # execute minimax(?) function 
+    #             # print percentage of people wanting to vote/ against voting 
             
-            elif r == "blue":
-                if player == "b":
-                    # execute player interactive function
-                    # print remaing energy amount 
-                elif ai == "b":
-                    # execute minimax(?) function 
-                # print percentage of people wanting to vote/ against voting 
+    #         elif r == "blue":
+    #             if player == "b":
+    #                 # execute player interactive function
+    #                 # print remaing energy amount 
+    #             elif ai == "b":
+    #                 # execute minimax(?) function 
+    #             # print percentage of people wanting to vote/ against voting 
             
-            elif r == "green":
-                # interaction function (dfs?)
-                # print percentage of people wanting to vote/ against voting 
+    #         elif r == "green":
+    #             # interaction function (dfs?)
+    #             # print percentage of people wanting to vote/ against voting 
         
-    # election day 
-    winner = max(for_voting, against_voting)
-    if winner == for_voting:
-        print("Blue wins!!\n")
-    elif winer == against_voting:
-        print("Red wins!!\n")
-    else:
-        print("It's a draw\n")
+    # # election day 
+    # winner = max(for_voting, against_voting)
+    # if winner == for_voting:
+    #     print("Blue wins!!\n")
+    # elif winner == against_voting:
+    #     print("Red wins!!\n")
+    # else:
+    #     print("It's a draw\n")
 
 
     
