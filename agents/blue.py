@@ -1,7 +1,8 @@
 class counterargument:
-    def intialise(self, strength, energycost):
+    def intialise(self, strength, energycost, type):
             self.strength = strength
             self.energycost = energycost
+            self.type = type
 
 class blue:
     #actions for blue agent
@@ -29,41 +30,39 @@ class blue:
                 print(f"Energy remaining: {self.energy}\n")
 
                 while True:
-                    message_choice = input("Please type the number of your choice (between 1 to 5): ")
-                    if message_choice >= 1 and message_choice <= 5:
+                    choice = input("Please type the number of your choice (between 1 to 5): ")
+                    if  choice >= 1 and  choice <= 5:
                         break
                     print("Invalid message. Try again. \n")
                 
                 energy_cost = 0
                 strength = 0
-                type = ""
                 
-                if int(message_choice) == 1:
+                if int(choice) == 1:
                     energy_cost = 2
                     strength = 0.05
-                    type = "Speech of Patriotism"
-                elif int(message_choice) == 2:
+                    type = "weak"
+                elif int(choice) == 2:
                     energy_cost = 4
                     strength = 0.1
-                    type = "Propaganda"
-                elif int(message_choice) == 3:
+                    type = "moderately weak"
+                elif int(choice) == 3:
                     energy_cost = 6
                     strength = 0.15
-                    type = "Conspiracy"
-                elif int(message_choice) == 4:
+                    type = "good"
+                elif int(choice) == 4:
                     energy_cost = 8
                     strength = 0.2
-                    type = "Fake News"
-                elif int(message_choice) == 5:
+                    type = "moderately strong"
+                elif int(choice) == 5:
                     energy_cost = 10
                     strength = 0.25
-                    type = "Fear mongering"
+                    type = "strong"
                 
                 # create message
-                message = propaganda(energy_cost, strength, type)
+                message = counterargument(energy_cost, strength, type)
                 print(f"You have chosen {message.type}!\n")
-                # number of interacted followers
-                num_follow = self.num_followers(message, green_nodes)
+                energy
 
                 # spread message
                 self.spread_misinformation(green_nodes, message)
