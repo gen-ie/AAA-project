@@ -98,33 +98,31 @@ def winning(greenarray, red_agent, blue_agent):
     if isinstance(red_agent, blue):
         temp = blue_agent
         blue_agent = red_agent
-        red_agent = temp
-        
+        red_agent = temp    
     # tamest possible propaganda tactic
     min_message = propaganda(0.8, -0.05, "Speech of Patriotism")
     return (greenstats(greenarray) == 100) or (greenstats(greenarray) == 0) or (red_agent.num_followers(min_message, greenarray) == 0) or (blue_agent.energy == 0)
-    
+
+
 def simulation(grayPercent, interval, num_rounds, vote_percent, player, ai): 
     rounds = ["red", "blue", "green"] * num_rounds
-
     # create graph
     graph = create_graph("network-2.csv")
     # create array of green nodes
     green_nodes = create_nodes(len(graph))
     # create agents
     if player == "r":
-        player = red(0, random.uniform(-0.85, -1))
+        player = red(0, round(random.uniform(-0.95, -1), 2))
         ai = blue(200)
     else:
         player = blue(200)
-        ai = red(0, random.uniform(-0.85, -1))
+        ai = red(0, round(random.uniform(-0.95, -1), 2))
 
     for r in rounds:
         # check if blue ran out of energy or red ran out of followers
         if winning(green_nodes, player, ai):
             # return name of winning agent 
             break
-
         else:
             if r == "red":
                 if player == "r":
