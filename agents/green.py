@@ -39,13 +39,16 @@ class green:
 
         return None
 
-    def DFS(graph, visited, currentnode):     #Navigates through graph and returns an array of node pairs
+    def DFS(self, graph, visited, currentnode):     #Navigates through graph and returns an array of node pairs
         neighbours = graph[currentnode]
+        v = visited
         
         for n in neighbours:
             if (n not in visited):
-
-        return None
+                self.influence(currentnode, n)
+                v.append(n)
+                self.DFS(graph, v, n)
+        return 
     
     
     

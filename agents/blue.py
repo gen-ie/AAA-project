@@ -9,7 +9,7 @@ class blue:
     def initialise(self, energy):
         self.energy = energy
 
-    def blue(self, greens, grey_interval):
+    def blue(self, greens, energy):
         while True:
             condition = input("would you like to send a direct message or use a gray agent? (direct or gray)")
             if condition.strip().lower() in ['direct', 'gray']:
@@ -27,7 +27,7 @@ class blue:
                 print("5: Strong") 
                 print("\n")
 
-                print(f"Energy remaining: {self.energy}\n")
+                print(f"Current energy: {energy}\n")
 
                 while True:
                     choice = input("Please type the number of your choice (between 1 to 5): ")
@@ -62,24 +62,26 @@ class blue:
                 # create message
                 message = counterargument(energy_cost, strength, type)
                 print(f"You have chosen {message.type}!\n")
-                '''if message.energy_cost > self.energy:
+                if message.energy_cost > energy :
                     while True:
-                        condition = input("insufficient energy, continue?(Y or N)")
+                        condition = input("Insufficient energy, continue?(Y or N)")
                         if condition.strip().lower() in ['Y', 'N']:
                             break
                         print("Invalid input")
-                    if (condition.strip().lower() == 'Y')
+                    if (condition.strip().lower() == 'Y'):
                         #red is winner
-                        winner = red
-                        game end() #return winner and final state(?)
-                    else
-                        BlueAction()
-                        break'''
+                        '''winner = red
+                        game end() #return winner and final state(?)'''
+                        break
+                    else:
+                        self.blue(greens, energy)
+                        break
 
-                # spread message
-                self.spread_message(greens, message)
-                print(f"Your message has been received. Your remaining energy is {self.energy}")
-                # print stats of overall opinion
+                else: # spread message
+                    self.spread_message(greens, message)
+                    energy = energy - message.energy_cost
+                    print(f"Your message has been received. Your remaining energy is {energy}")
+                # print stats of overall opinion(?)
             else:
                 self.deploy_grey()           
 
