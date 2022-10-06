@@ -42,6 +42,9 @@ class green:
     def DFS(graph, visited, currentnode):     #Navigates through graph and returns an array of node pairs
         neighbours = graph[currentnode]
         
+        for n in neighbours:
+            if (n not in visited):
+
         return None
     
     

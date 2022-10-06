@@ -1,8 +1,8 @@
-sys.path.append(".")
-
 import random
 import sys
 import csv
+
+sys.path.append(".")
 from green import green
 
 def create_nodes(num_nodes): # returns an array of green nodes
@@ -84,7 +84,7 @@ def initialise():
 
 
 def simulation(grayPercent, interval, num_rounds, vote_percent, player, ai): 
-    rounds = ["red", "blue", "green"] * num_rounds
+    # rounds = ["red", "blue", "green"] * num_rounds
 
     # create graph
     graph = create_graph("network-2.csv")

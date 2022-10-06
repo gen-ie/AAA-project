@@ -62,18 +62,26 @@ class blue:
                 # create message
                 message = counterargument(energy_cost, strength, type)
                 print(f"You have chosen {message.type}!\n")
-                energy
+                '''if message.energy_cost > self.energy:
+                    while True:
+                        condition = input("insufficient energy, continue?(Y or N)")
+                        if condition.strip().lower() in ['Y', 'N']:
+                            break
+                        print("Invalid input")
+                    if (condition.strip().lower() == 'Y')
+                        #red is winner
+                        winner = red
+                        game end() #return winner and final state(?)
+                    else
+                        BlueAction()
+                        break'''
 
                 # spread message
-                self.spread_misinformation(green_nodes, message)
-                print(f"You have interacted with {num_follow} nodes")
+                self.spread_message(greens, message)
+                print(f"Your message has been received. Your remaining energy is {self.energy}")
                 # print stats of overall opinion
-                return None
             else:
-
-                #deploy_grey
-                
-                return None                
+                self.deploy_grey()           
 
     def spread_message(self, greenarray, counterargument):
         for node in greenarray:
@@ -88,36 +96,8 @@ class blue:
             #spread blue message(max)
         #if grey is red
             #spread red message(max)
-        return None
+        print(f"Grey agent has been deployed and finished spreading its message.")
 
     def blue_ai(self, green):
         #bayesian
         return None
-
-    '''def BlueAction(self, )
-        if(statement.energy >= energy) #insufficient energy)
-                    while True:
-                        condition = input("insufficient energy, continue?(Y or N)")
-                        if condition.strip().lower() in ['Y', 'N']:
-                            break
-                        print("Invalid input")
-                    if (condition.strip().lower() == 'Y')
-                        #red is winner
-                        winner = red
-                        game end() #return winner and final state(?)
-                    else
-                        BlueAction()
-                        break                    
-                else #sufficient energy to make statement    
-                    for green in greennodes
-                        counterpropaganda(population, countermessage) #interact with all green population
-                        energy -= countermessage.energycost
-            else
-                deploy_gray_agent(message, countermessage, probability) #message from red, countermessage from blue, chance of grey being red/blue
-    
-
-    message = chosen by player 
-    ask the player if they want to message deployed directly or via gray agent
-    
-    deploy_gray(message)
-    direct(message)'''
