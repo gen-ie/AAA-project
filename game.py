@@ -71,7 +71,7 @@ def initialise():
 
 
 def simulation(grayPercent, interval, num_rounds, vote_percent, player, ai): 
-    rounds = ["red", "green", "blue"] * num_rounds
+    rounds = ["red", "blue", "green"] * num_rounds
 
     # create array of green nodes
     # create graph
