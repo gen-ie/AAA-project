@@ -11,5 +11,5 @@ class gray:
         
     elif gray_type == 1:
         print("gray is blue")
-    #blue gets another turnh without losing life, lets gray agent out into network
+    #blue gets another turn without losing life, lets gray agent out into network
     #gray agents know the amount of people who do/dont want to vote

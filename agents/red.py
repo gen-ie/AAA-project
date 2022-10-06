@@ -8,7 +8,8 @@ class propaganda:
 
 class red:
     '''actions for red agent'''
-    def __init__(self, uncertainty):
+    def __init__(self, opinion, uncertainty):
+        self.opinion = opinion
         self.uncertainty = uncertainty
     
     def spread_misinformation(self, array_green, message):
@@ -22,9 +23,9 @@ class red:
                 if green.uncertainty < -1:
                     green.uncertainty = -1
 
-    def num_followers(message, green_nodes):
+    def num_followers(self, message, green_nodes):
         followers = 0
-        max_interval = message.max_inteval
+        max_interval = message.max_interval
         for g in green_nodes:
             if g.uncertainty < max_interval:
                 followers += 1
@@ -83,8 +84,7 @@ class red:
         self.spread_misinformation(green_nodes, message)
         print(f"You have interacted with {num_follow} nodes")
         # print stats of overall opinion
-
-        
+ 
     def red_ai(green_nodes):
         # minimax
         # scoring system: number of nodes that do not want to vote

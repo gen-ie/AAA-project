@@ -4,6 +4,8 @@ import csv
 
 sys.path.append(".")
 from green import green
+from red import *
+from blue import *
 
 def create_nodes(num_nodes): # returns an array of green nodes
     green_array = []
@@ -81,48 +83,82 @@ def initialise():
     # player and ai will have their own colors
     simulation(grayPercent, [min_interval, max_interval], vote_percent, num_rounds, player_agent, ai_agent)
 
+def greenstats(greenarray): 
+    voting = 0
+    for index in greenarray:
+        if greenarray[index].opinion == 1:
+            voting += 1
+    votepercent = (voting/len(greenarray))*100
+    print(f"The current percent of the population that wants to vote is {votepercent}%")
+    print(f"The current percent of the population that do not want to vote is {100 - votepercent}%\n")
+    return votepercent
 
-
+def winning(greenarray, red_agent, blue_agent):
+    # if swapped...
+    if isinstance(red_agent, blue):
+        temp = blue_agent
+        blue_agent = red_agent
+        red_agent = temp
+        
+    # tamest possible propaganda tactic
+    min_message = propaganda(0.8, -0.05, "Speech of Patriotism")
+    return (greenstats(greenarray) == 100) or (greenstats(greenarray) == 0) or (red_agent.num_followers(min_message, greenarray) == 0) or (blue_agent.energy == 0)
+    
 def simulation(grayPercent, interval, num_rounds, vote_percent, player, ai): 
-    # rounds = ["red", "blue", "green"] * num_rounds
+    rounds = ["red", "blue", "green"] * num_rounds
 
     # create graph
     graph = create_graph("network-2.csv")
-    print(graph)
     # create array of green nodes
     green_nodes = create_nodes(len(graph))
+    # create agents
+    if player == "r":
+        player = red(0, random.uniform(-0.85, -1))
+        ai = blue(200)
+    else:
+        player = blue(200)
+        ai = red(0, random.uniform(-0.85, -1))
 
-    # counters
-    for_voting = 0
-    against_voting = 0 
+    for r in rounds:
+        # check if blue ran out of energy or red ran out of followers
+        if winning(green_nodes, player, ai):
+            # return name of winning agent 
+            break
 
-    # for r in rounds:
-    #     # check if blue ran out of energy or red ran out of followers
-    #     if winning():
-    #         # return name of winning agent 
-    #         break
-
-    #     else:
-    #         if r == "red":
-    #             if player == "r":
-    #                 # execute player interactive function
-    #                 # print number of followers
-    #             elif ai == "r":
-    #                 # execute minimax(?) function 
-    #             # print percentage of people wanting to vote/ against voting 
+        else:
+            if r == "red":
+                if player == "r":
+                    # execute player interactive function
+                    # print number of followers
+                    return None
+                elif ai == "r":
+                    # execute minimax(?) function 
+                # print percentage of people wanting to vote/ against voting 
+                    return None
             
-    #         elif r == "blue":
-    #             if player == "b":
-    #                 # execute player interactive function
-    #                 # print remaing energy amount 
-    #             elif ai == "b":
-    #                 # execute minimax(?) function 
-    #             # print percentage of people wanting to vote/ against voting 
+            elif r == "blue":
+                if player == "b":
+                    # execute player interactive function
+                    # print remaing energy amount 
+                    return None
+                elif ai == "b":
+                    # execute minimax(?) function 
+                    # print percentage of people wanting to vote/ against voting 
+                    return None
             
-    #         elif r == "green":
-    #             # interaction function (dfs?)
-    #             # print percentage of people wanting to vote/ against voting 
-        
+            elif r == "green":
+                # interaction function (dfs?)
+                # print percentage of people wanting to vote/ against voting 
+                return None
+    votepercent = greenstats(green_nodes)
+    if votepercent > 50:
+        print(f"Blue has won the game\n")
+    elif votepercent < 50:
+        print(f"Red has won the game\n")
+    else:
+        print(f"It's a draw\n")
+    
+
     # # election day 
     # winner = max(for_voting, against_voting)
     # if winner == for_voting:
@@ -131,9 +167,6 @@ def simulation(grayPercent, interval, num_rounds, vote_percent, player, ai):
     #     print("Red wins!!\n")
     # else:
     #     print("It's a draw\n")
-
-
-    
     '''runs the game until either a) win condition is met or b) all rounds have been executed'''
     '''
     winning conditions

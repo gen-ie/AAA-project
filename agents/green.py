@@ -41,15 +41,17 @@ class green:
             visited.append(n1) 
             for n2 in graph[n1]:
                 if n2 not in visited:
-                    updated_node, influencer = self.influence(n1,n2)
-                    if n1 == influencer:
-                        n2 = updated_node
-                    else:
-                        n1 = updated_node
+                    updated_node, influencer = self.influence(n1, n2)
                     # update green_array
-            # return array of green nodes (updated)
-        return graph
-    '''
+                    green_array[updated_node.id] = updated_node
+                    green_array[influencer.id] = influencer
+        return green_array 
+    
+    
+    
+    
+    
+    ''' 
     def DFS(self, graph, visited, currentnode, green_array):     #Navigates through graph and returns an array of node pairs
         neighbours = graph[currentnode]
         v = visited
@@ -61,9 +63,6 @@ class green:
                 self.DFS(graph, v, n)
         return (node1, node2)
         '''
-    
-    
-    
     # def find_path(dictionary, start_word, end_word):
     # '''
     # returns a list of the word in the shortest path 
