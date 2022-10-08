@@ -5,47 +5,17 @@ class green:
         self.uncertainty = uncertainty
         self.opinion = opinion
 
-    def influence(self, node1, node2):    #Takes a node pair instance and causes an interaction
-        # node that is furthest away from zero influences the other node
-        first = abs(node1)
-        second = abs(node2)
-        
-        influenced = min(self, first, second)
-        influencer = max(self, first, second)
-        
-        # value change 
-        value_change = abs(first - second) * 0.1 
-        if influencer.opinion == 1:
-            updated_node = self.change_uncertainty(influenced, value_change)
-        elif influencer.opinion == 0:
-            updated_node = self.change_uncertainty(influenced, value_change * -1)
-        return updated_node, influencer
-
-
-    def change_uncertainty(self, node, value_change):     #Modifies the uncertainty value of a node
-        node.uncertainty += value_change
+    def change_uncertainty(self, value_change):     #Modifies the uncertainty value of a node
+        self.uncertainty += value_change
         # check opinion
-        if node.uncertainty > 0:
+        if self.uncertainty > 0:
             #wanting to vote, positive = for voting
-            node.opinion = 1
+            self.opinion = 1
         else:
-            node.opinion = 0
-        return node
+            self.opinion = 0
+        return self
 
-    def interact(self, graph, green_array):    #Acts as green's "turn" when all adjacent green nodes interact with one another [0 1,2,3,4,8] 0-1 0-2 0-3 0-4 [5,6,7]
-        #DFS through the graph
-        visited = []
-        # greenpairs = self.DFS(graph, visited, 0, green_array)
-        #node pairs influence each other
-        for n1 in graph:
-            visited.append(n1) 
-            for n2 in graph[n1]:
-                if n2 not in visited:
-                    updated_node, influencer = self.influence(n1, n2)
-                    # update green_array
-                    green_array[updated_node.id] = updated_node
-                    green_array[influencer.id] = influencer
-        return green_array 
+    
     
     
     
