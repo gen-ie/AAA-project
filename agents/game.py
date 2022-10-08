@@ -8,23 +8,37 @@ from red import *
 from blue import *
 
 # CREATION OF GRAPH/NODES
-def create_nodes(num_nodes, vote_percent, interval): # returns an array of green nodes
-    green_array = []
+def create_nodes(num_nodes, vote_percent): # returns an array of green nodes
+    voting = round(num_nodes*vote_percent)
+    opinions = [1, 0]
+    op_array = random.choices(opinions, weights=[voting, num_nodes-voting], k=num_nodes)
+
+    nodes = []
     for i in range(num_nodes):
-        uncertainty = round(random.uniform(interval[0], interval[1]), 2)
-        opinion = 1 if uncertainty > 0 else 0
-        green_array.append(green(i, uncertainty, opinion))
-    return green_array
+        if op_array[i] == 0:
+            uncertainty = round(random.uniform(-1, 0), 2)
+            nodes.append(green(i, uncertainty, op_array[i]))
+        elif op_array[i] == 1:
+            uncertainty = round(random.uniform(0.01, 1), 2)
+            nodes.append(green(i, uncertainty, op_array[i]))
+    return nodes
 
 
 def create_graph(network_file):
     # create a adjacency lists of green nodes
+    unique_nodes_num = []
     graph = {}
     with open(network_file) as network:
         connection = csv.reader(network)
 
         for c in connection:
             if ("node" not in c[0]):
+                # counting unique nodes
+                if (int(c[0]) not in unique_nodes_num):
+                    unique_nodes_num.append(int(c[0]))
+                if (int(c[1]) not in unique_nodes_num):
+                    unique_nodes_num.append(int(c[1]))
+
                 if (int(c[0]) not in graph):
                     graph[int(c[0])] = [int(c[1])]
                 elif (int(c[0]) in graph)  and (int(c[1]) not in graph[int(c[0])]):
@@ -32,7 +46,7 @@ def create_graph(network_file):
                     adj.append(int(c[1]))
                     graph[int(c[0])] = adj
     network.close()
-    return graph
+    return graph, sorted(unique_nodes_num)
 
 
 # HELPER FUNCTIONS
@@ -64,6 +78,47 @@ def get_most_uncertain(greenarray):
     return uncertain
 
 
+# GREEN NODE INTERACTION
+def influence(node1, node2):    #Takes a node pair instance and causes an interaction
+        # node that is furthest away from zero influences the other node
+        first = abs(node1.uncertainty)
+        second = abs(node2.uncertainty)
+
+        influencer = node1
+        influenced = node2
+        if first <= second:
+            influencer = node2
+            influenced = node1
+        
+        # value change 
+        value_change = abs(first - second) 
+        
+        if influencer == 1:
+            influenced = influenced.change_uncertainty(value_change)
+        elif influencer == 0:
+            influenced = influenced.change_uncertainty(value_change * -1)
+        # print(node1.uncertainty, node2.uncertainty)
+        # print(influenced.uncertainty, influencer.uncertainty)
+        return influenced, influencer
+
+def interact(graph, green_array):    #Acts as green's "turn" when all adjacent green nodes interact with one another [0 1,2,3,4,8] 0-1 0-2 0-3 0-4 [5,6,7]
+    #DFS through the graph
+    visited = []
+    # greenpairs = self.DFS(graph, visited, 0, green_array)
+    #node pairs influence each other
+    for n1 in graph:
+        visited.append(n1) 
+        for n2 in graph[n1]:
+            if n2 not in visited:
+                # print(n1, n2)
+                # minus one as index started with zero (the first node was labled 1)
+                updated_node, influencer = influence(green_array[n1-1], green_array[n2-1])
+                # update green_array
+                green_array[updated_node.id] = updated_node
+                green_array[influencer.id] = influencer
+    return green_array
+
+
 # GAME START-UP
 def initialise():
     # welcome message
@@ -90,14 +145,14 @@ def initialise():
             break
         print("Invalid output. Please try again\n")
     
-    while True:
-        min_interval = input("Minimum interval (between -1 and 1): ")
-        max_interval = input("Maximum interval (between -1 and 1): ")
+    # while True:
+    #     min_interval = input("Minimum interval (between -1 and 1): ")
+    #     max_interval = input("Maximum interval (between -1 and 1): ")
 
-        if (float(min_interval.strip().lower()) >= -1) and (float(min_interval.strip().lower()) <= 1) and (float(max_interval.strip().lower()) >= -1) and (float(max_interval.strip().lower()) <= 1):
-            if (float(min_interval.strip().lower()) < float(max_interval.strip().lower())):
-                break
-        print("Invalid output. Please try again\n")
+    #     if (float(min_interval.strip().lower()) >= -1) and (float(min_interval.strip().lower()) <= 1) and (float(max_interval.strip().lower()) >= -1) and (float(max_interval.strip().lower()) <= 1):
+    #         if (float(min_interval.strip().lower()) < float(max_interval.strip().lower())):
+    #             break
+    #     print("Invalid output. Please try again\n")
     
     while True:
         vote_percent = input("Percentage of people willing to vote (between 0-1): ")
@@ -112,16 +167,18 @@ def initialise():
 
     # start simulation
     # player and ai will have their own colors
-    simulation(grayPercent, [min_interval, max_interval], int(num_rounds), vote_percent, player_agent, ai_agent)
+    simulation(float(grayPercent), int(num_rounds), float(vote_percent), player_agent, ai_agent)
 
-def simulation(grayPercent, interval, num_rounds, vote_percent, player, ai): 
+def simulation(grayPercent, num_rounds, vote_percent, player, ai): 
     rounds = ["red", "blue", "green"] * num_rounds
     # create graph
-    graph = create_graph("network-2.csv")
+    graph, num_nodes = create_graph("network-2.csv")
+
     # create array of green nodes
-    green_nodes = create_nodes(len(graph), vote_percent, interval)
-    for g in green_nodes:
-        print(g.uncertainty, g.opinion)
+    green_nodes = create_nodes(len(num_nodes), vote_percent)
+    greenstats(green_nodes)
+    # for g in green_nodes:
+    #     print(g.uncertainty, g.opinion)
 
     # create agents
     if player == "r":
@@ -158,9 +215,10 @@ def simulation(grayPercent, interval, num_rounds, vote_percent, player, ai):
                 # execute minimax(?) function 
                 # print percentage of people wanting to vote/ against voting 
         elif r == "green":
-            continue
-            # interaction function (dfs?)
-            # print percentage of people wanting to vote/ against voting 
+            green_nodes = interact(graph, green_nodes)
+            for g in green_nodes:
+                print(g.uncertainty, g.opinion)
+            greenstats(green_nodes)
 
     votepercent = greenstats(green_nodes)
     if votepercent > 50:
