@@ -6,7 +6,7 @@ class counterargument:
 
 class blue:
     #actions for blue agent
-    def initialise(self, energy):
+    def __init__(self, energy):
         self.energy = energy
 
     def blue(self, greens, energy):
