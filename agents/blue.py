@@ -1,3 +1,6 @@
+from gray import *
+import random
+
 class counterargument:
     def __init__(self, strength, energy_cost, type):
             self.strength = strength
@@ -6,10 +9,11 @@ class counterargument:
 
 class blue:
     #actions for blue agent
-    def __init__(self, energy):
+    def __init__(self, energy, gray_percent):
         self.energy = energy
+        self.gray_percent = gray_percent
 
-    def blue(self, greens):
+    def blue(self, greens, gray_percent):
         while True:
             condition = input("would you like to send a direct message or use a gray agent? (direct or gray)")
             if condition.strip().lower() in ['direct', 'gray']:
@@ -63,20 +67,13 @@ class blue:
             message = counterargument(strength, energy_cost, type)
             print(f"You have chosen {message.type}!\n")
             if message.energy_cost >= self.energy :
-                while True:
-                    condition = input("Insufficient energy, continue?(Y or N)")
-                    if condition.strip().lower() in ['y', 'n']:
-                        break
-                    print("Invalid input")
-                if (condition.strip().lower() == 'y'):
-                    #red is winner
-                    '''winner = red
-                    game end() #return winner and final state(?)'''
-                    print("Blue died. Red wins!")
-                    return 
+                x = self.check()
+                if(x == 1):
+                    self.energy = 0
+                    return greens
                 else:
-                    self.blue(greens)
-                    return
+                    updated_recursive_greens = self.blue(greens)
+                    return updated_recursive_greens
 
             else: # spread message
                 updated_greens = self.spread_message(greens, message)
@@ -86,8 +83,27 @@ class blue:
                     print("after blue:", u.uncertainty, u.opinion)
                 return updated_greens
                 # print stats of overall opinion(?)
-        '''else:
-            self.deploy_grey()'''           
+        else:
+            stance = ['red','blue']
+            allegiance = random.choices(stance, weights=[gray_percent, 100-gray_percent], k=1)
+            uncertainty = round(random.uniform(-0.95, -1), 2)
+            gray_agent = gray(uncertainty, allegiance)
+            greens = gray_agent.deploy_grey(gray_percent, greens)        
+
+    def check(self):
+        z = 0
+        while True:
+            condition = input("Insufficient energy, continue?(Y or N)")
+            if condition.strip().lower() in ['y', 'n']:
+                break
+            print("Invalid input")
+        if (condition.strip().lower() == 'y'):
+            z = 1
+            print("Blue died. Red wins!")
+            return z
+        else:
+            z = 2
+            return z
 
     def spread_message(self, greenarray, counterargument):
         for node in greenarray:
@@ -100,14 +116,9 @@ class blue:
                 node.opinion = 0
         return greenarray
     
-    def deploy_grey(self):
-        gray = gray()
-        gray.function
-        #if grey is blue
-            #spread blue message(max)
-        #if grey is red
-            #spread red message(max)
-        print(f"Grey agent has been deployed and finished spreading its message.")
+    def deploy_grey(self, gray_percent, greens):
+        print(f"Grey agent has been deployed")
+        return self.graymove(gray_percent, greens)        
 
     def blue_ai(self, green):
         #bayesian
