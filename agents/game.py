@@ -220,6 +220,7 @@ def simulation(grayPercent, num_rounds, vote_percent, player, ai):
                 print(g.uncertainty, g.opinion)
             greenstats(green_nodes)
 
+    # election day 
     votepercent = greenstats(green_nodes)
     if votepercent > 50:
         print(f"Blue has won the game\n")
@@ -228,16 +229,21 @@ def simulation(grayPercent, num_rounds, vote_percent, player, ai):
     else:
         print(f"It's a draw\n")
     
-
-    # election day 
+    '''
     winner = max(for_voting, against_voting)
     if winner == for_voting:
         print("Blue wins!!\n")
     elif winner == against_voting:
         print("Red wins!!\n")
     else:
-        print("It's a draw\n")
+        print("It's a draw\n")'''
     '''runs the game until either a) win condition is met or b) all rounds have been executed'''
+    
+    
+    
+    
+    
+    
     '''
     winning conditions
     if blue can no longer act (lost all energy), red wins
