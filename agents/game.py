@@ -55,6 +55,7 @@ def greenstats(greenarray):
     for g in range(len(greenarray)):
         if greenarray[g].opinion == 1:
             voting += 1
+    print(f"number of green nodes: {len(greenarray)}")
     votepercent = (voting/len(greenarray))*100
     print(f"Voting: {votepercent}%")
     print(f"Not voting: {100 - votepercent}%\n")
@@ -91,12 +92,12 @@ def influence(node1, node2):    #Takes a node pair instance and causes an intera
             influenced = node1
         
         # value change 
-        value_change = abs(first - second) 
+        value_change = abs(first - second)*0.333
         
-        if influencer == 1:
-            influenced = influenced.change_uncertainty(value_change)
-        elif influencer == 0:
-            influenced = influenced.change_uncertainty(value_change * -1)
+        if influencer.opinion == 1:
+            influenced = influenced.change_uncertainty(influenced, value_change)
+        elif influencer.opinion == 0:
+            influenced = influenced.change_uncertainty(influenced, value_change * -1)
         # print(node1.uncertainty, node2.uncertainty)
         # print(influenced.uncertainty, influencer.uncertainty)
         return influenced, influencer
@@ -176,17 +177,19 @@ def simulation(grayPercent, num_rounds, vote_percent, player, ai):
 
     # create array of green nodes
     green_nodes = create_nodes(len(num_nodes), vote_percent)
+    for g in green_nodes:
+        print('initial:', g.uncertainty, g.opinion)
     greenstats(green_nodes)
     # for g in green_nodes:
     #     print(g.uncertainty, g.opinion)
 
     # create agents
     if player == "r":
-        player = red(0, round(random.uniform(-0.9, -1), 2))
-        ai = blue(200)
+        player = red(0, round(random.uniform(-0.95, -1), 2))
+        ai = blue(10)
     else:
-        player = blue(200)
-        ai = red(0, round(random.uniform(-0.9, -1), 2))
+        player = blue(10)
+        ai = red(0, round(random.uniform(-0.95, -1), 2))
 
     for r in rounds:
         # check if blue ran out of energy or red ran out of followers
@@ -206,22 +209,26 @@ def simulation(grayPercent, num_rounds, vote_percent, player, ai):
             # print percentage of people wanting to vote/ against voting
         
         elif r == "blue":
-            if player == "b":
-                continue
+            if isinstance(player, blue):
                 # execute player interactive function
-                # print remaing energy amount 
-            elif ai == "b":
-                continue
+                green_nodes = player.blue(green_nodes)
+                #print remaining energy
+                greenstats(green_nodes)
+            elif isinstance(ai, blue):
+                green_nodes = ai.blue(green_nodes)
+                #print remaining energy
+                greenstats(green_nodes)
                 # execute minimax(?) function 
                 # print percentage of people wanting to vote/ against voting 
         elif r == "green":
             green_nodes = interact(graph, green_nodes)
             for g in green_nodes:
-                print(g.uncertainty, g.opinion)
+                print('after interaction:', g.uncertainty, g.opinion)
             greenstats(green_nodes)
 
     # election day 
     votepercent = greenstats(green_nodes)
+    print(f"!!ELECTION DAY!!\n")
     if votepercent > 50:
         print(f"Blue has won the game\n")
     elif votepercent < 50:

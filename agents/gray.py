@@ -1,4 +1,13 @@
 from random import randint
+from red import *
+from blue import *
+
+class message:
+    def __init__(self, allegiance, potency, type) -> None:
+        self.allegiance = allegiance
+        self.potency = potency
+        self.type = type
+        
 class gray:
     '''subclass of blue / actions of gray agent'''
     #number of gray nodes is expressed as PERCENTAGE in a parameter

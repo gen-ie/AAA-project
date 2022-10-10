@@ -96,7 +96,7 @@ class red:
         print(f"You have interacted with {num_interact} nodes\n\n")
         # print stats of overall opinion
         for u in updated_nodes:
-            print(u.uncertainty, u.opinion)
+            print("after red:", u.uncertainty, u.opinion)
         return updated_nodes
  
     def red_ai(green_nodes):

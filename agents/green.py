@@ -5,20 +5,15 @@ class green:
         self.uncertainty = uncertainty
         self.opinion = opinion
 
-    def change_uncertainty(self, value_change):     #Modifies the uncertainty value of a node
-        self.uncertainty += value_change
+    def change_uncertainty(self, node, value_change):     #Modifies the uncertainty value of a node
+        node.uncertainty += value_change
         # check opinion
-        if self.uncertainty > 0:
+        if node.uncertainty > 0:
             #wanting to vote, positive = for voting
-            self.opinion = 1
+            node.opinion = 1
         else:
-            self.opinion = 0
+            node.opinion = 0
         return self
-
-    
-    
-    
-    
     
     
     ''' 
