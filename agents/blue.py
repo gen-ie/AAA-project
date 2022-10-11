@@ -70,31 +70,31 @@ class blue:
                 x = self.check()
                 if(x == 1):
                     self.energy = 0
-                    return greens
+                    return greens,gray_percent
                 else:
-                    updated_recursive_greens = self.blue(greens)
+                    updated_recursive_greens = self.blue(greens, gray_percent)
                     return updated_recursive_greens
 
             else: # spread message
                 updated_greens = self.spread_message(greens, message)
                 self.energy = self.energy - message.energy_cost
                 print(f"Your message has been received. Your remaining energy is {self.energy}")
-                for u in updated_greens:
-                    print("after blue:", u.uncertainty, u.opinion)
-                return updated_greens
+                # for u in updated_greens:
+                #     print("after blue:", u.uncertainty, u.opinion)
+                return updated_greens, gray_percent
                 # print stats of overall opinion(?)
         else:
             stance = ['blue', 'red']
             allegiance = random.choices(stance, weights=[gray_percent*10, (1-gray_percent)*10], k=10)
             print(allegiance)
-            uncertainty = round(random.uniform(0.95, -1), 2)
+            uncertainty = round(random.uniform(0.95, 1), 2)
             if allegiance[0] == "red":
                 uncertainty *= -1
             print(gray_percent, "%")
             print(allegiance[0])
             gray_agent = gray(uncertainty, allegiance[0])
             greens = gray_agent.deploy_grey(greens) 
-            return greens       
+            return greens, gray_percent - 0.1    
 
     def check(self):
         z = 0
@@ -105,7 +105,7 @@ class blue:
             print("Invalid input")
         if (condition.strip().lower() == 'y'):
             z = 1
-            print("Blue died. Red wins!")
+            # print("Blue died. Red wins!")
             return z
         else:
             z = 2
