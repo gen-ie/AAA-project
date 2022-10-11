@@ -108,7 +108,7 @@ def minimax(self, green_nodes, num_rounds, agent, opp_ply):
         for p in propaganda_types:
             green_node_copy = green_nodes.copy()
             updated_nodes = agent.spread_misinformation(green_node_copy, p)[0]
-            opinion_post_spread = minimax(updated_nodes, num_rounds-1, "blue")[1]
+            opinion_post_spread = minimax(updated_nodes, num_rounds-1, opp_ply, agent)[1]
             if opinion_post_spread < overall_opinion:
                 msg_type = p
                 overall_opinion = opinion_post_spread
@@ -121,7 +121,7 @@ def minimax(self, green_nodes, num_rounds, agent, opp_ply):
         for m in message_types:
             green_node_copy = green_nodes.copy()
             updated_nodes = agent.spread_message(green_node_copy, m)[0]
-            opinion_post_spread = self.minimax(updated_nodes, num_rounds-1, "red")[1]
+            opinion_post_spread = self.minimax(updated_nodes, num_rounds-1, opp_ply, agent)[1]
             if opinion_post_spread < overall_opinion:
                 msg_type = m
                 overall_opinion = opinion_post_spread
