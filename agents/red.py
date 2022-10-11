@@ -1,4 +1,3 @@
-from game import *
 import random
 
 class propaganda:

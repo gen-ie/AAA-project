@@ -13,7 +13,8 @@ class blue:
         self.energy = energy
         self.gray_percent = gray_percent
 
-    def blue(self, greens, gray_percent):
+    def blue_player(self, greens, gray_percent):
+        print("did it get through?")
         while True:
             condition = input("would you like to send a direct message or use a gray agent? (direct or gray)")
             if condition.strip().lower() in ['direct', 'gray']:
@@ -39,33 +40,9 @@ class blue:
                     break
                 print("Invalid message. Try again. \n")
             
-            energy_cost = 0
-            strength = 0
-            
-            if int(choice) == 1:
-                energy_cost = 2
-                strength = 0.05
-                type = "weak"
-            elif int(choice) == 2:
-                energy_cost = 4
-                strength = 0.1
-                type = "moderately weak"
-            elif int(choice) == 3:
-                energy_cost = 6
-                strength = 0.15
-                type = "good"
-            elif int(choice) == 4:
-                energy_cost = 8
-                strength = 0.2
-                type = "moderately strong"
-            elif int(choice) == 5:
-                energy_cost = 10
-                strength = 0.25
-                type = "strong"
-            
-            # create message
-            message = counterargument(strength, energy_cost, type)
+            message = self.create_counterargument(choice)
             print(f"You have chosen {message.type}!\n")
+            
             if message.energy_cost >= self.energy :
                 x = self.check()
                 if(x == 1):
@@ -79,8 +56,8 @@ class blue:
                 updated_greens = self.spread_message(greens, message)
                 self.energy = self.energy - message.energy_cost
                 print(f"Your message has been received. Your remaining energy is {self.energy}")
-                # for u in updated_greens:
-                #     print("after blue:", u.uncertainty, u.opinion)
+                for u in updated_greens:
+                    print("after blue:", u.uncertainty, u.opinion)
                 return updated_greens, gray_percent
                 # print stats of overall opinion(?)
         else:
@@ -95,6 +72,35 @@ class blue:
             gray_agent = gray(uncertainty, allegiance[0])
             greens = gray_agent.deploy_grey(greens) 
             return greens, gray_percent - 0.1    
+
+    def create_counterargument(self, choice):
+        energy_cost = 0
+        strength = 0
+        
+        if int(choice) == 1:
+            energy_cost = 2
+            strength = 0.05
+            type = "weak"
+        elif int(choice) == 2:
+            energy_cost = 4
+            strength = 0.1
+            type = "moderately weak"
+        elif int(choice) == 3:
+            energy_cost = 6
+            strength = 0.15
+            type = "good"
+        elif int(choice) == 4:
+            energy_cost = 8
+            strength = 0.2
+            type = "moderately strong"
+        elif int(choice) == 5:
+            energy_cost = 10
+            strength = 0.25
+            type = "strong"
+        
+        # create message
+        message = counterargument(strength, energy_cost, type)
+        return message
 
     def check(self):
         z = 0
@@ -125,7 +131,3 @@ class blue:
     def deploy_grey(self, gray_percent, greens):
         print(f"Grey agent has been deployed")
         return self.graymove(gray_percent, greens)        
-
-    def blue_ai(self, green):
-        #bayesian
-        return None

@@ -17,7 +17,6 @@ class gray:
     # #red gets to deploy a campaign WITHOUT red team losing followers
     #     print("gray is red")
         
-        
     # elif gray_type == 1:
     #     print("gray is blue")
     #blue gets another turn without losing life, lets gray agent out into network
