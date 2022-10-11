@@ -34,8 +34,7 @@ class red:
             if green.uncertainty <= 0:
                 green.opinion = 0
         # decrease red's persuasive power
-        if hasattr(self, "follower_lose"):
-            self.uncertainty += message.follower_lose
+        self.uncertainty += message.follower_lose
         return array_green, num_interact
 
     # def num_followers(self, green_nodes):

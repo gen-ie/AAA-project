@@ -250,6 +250,8 @@ def simulation(grayPercent, num_rounds, vote_percent, player, ai):
             if isinstance(player, blue):
                 # execute player interactive function
                 green_nodes = player.blue(green_nodes, grayPercent)
+                for g in green_nodes:
+                    print('after gray:', g.uncertainty, g.opinion)
                 #print remaining energy
                 greenstats(green_nodes)
             elif isinstance(ai, blue):

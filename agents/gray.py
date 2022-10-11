@@ -26,8 +26,8 @@ class gray:
         self.uncertainty = uncertainty
         self.allegiance = allegiance
 
-    def deploy_grey(self, gray_percent, greens):
-        MAX_POTENCY = 0.25
+    def deploy_grey(self, greens):
+        MAX_POTENCY = 0.125
         if self.allegiance == "red":
             propaganda = message("red", MAX_POTENCY * -1, "Fear Mongering")
             greens = self.spread_misinformation(greens, propaganda)
@@ -35,8 +35,25 @@ class gray:
             
         elif self.allegiance == "blue":
             propaganda = message("blue", MAX_POTENCY, "ANTIFEAR")
-            greens = self.spread_misinformation(greens, propaganda)
+            greens = self.spread_message(greens, propaganda)
             return greens
+
+    def spread_misinformation(self, array_green, message):
+        num_interact = 0
+        for green in array_green:
+            # to determine which nodes red can interact with: take the absolute value of red as maximum uncertainty red can interact with
+            # example: let red have an uncertainty of -0.91; taking the absolute value, red can interact with green nodes with uncertainty 0.91 and below
+            # red cannot gain back its persuasive power 
+            if abs(self.uncertainty) >= green.uncertainty:
+                num_interact += 1
+                #change the uncertainty of node
+                green.uncertainty +=  message.potency
+                if green.uncertainty < -1:
+                    green.uncertainty = -1
+            # check updated opinion
+            if green.uncertainty <= 0:
+                green.opinion = 0
+        return array_green, num_interact
 
     def spread_message(self, greenarray, message):
         for node in greenarray:

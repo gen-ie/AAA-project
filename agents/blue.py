@@ -84,11 +84,17 @@ class blue:
                 return updated_greens
                 # print stats of overall opinion(?)
         else:
-            stance = ['red','blue']
-            allegiance = random.choices(stance, weights=[gray_percent, 100-gray_percent], k=1)
-            uncertainty = round(random.uniform(-0.95, -1), 2)
-            gray_agent = gray(uncertainty, allegiance)
-            greens = gray_agent.deploy_grey(gray_percent, greens)        
+            stance = ['blue', 'red']
+            allegiance = random.choices(stance, weights=[gray_percent*10, (1-gray_percent)*10], k=10)
+            print(allegiance)
+            uncertainty = round(random.uniform(0.95, -1), 2)
+            if allegiance[0] == "red":
+                uncertainty *= -1
+            print(gray_percent, "%")
+            print(allegiance[0])
+            gray_agent = gray(uncertainty, allegiance[0])
+            greens = gray_agent.deploy_grey(greens) 
+            return greens       
 
     def check(self):
         z = 0
