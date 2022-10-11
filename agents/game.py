@@ -1,4 +1,5 @@
 import random
+from re import M
 import sys
 import csv
 
@@ -8,7 +9,7 @@ from red import *
 from blue import *
 
 # CREATION OF GRAPH/NODES
-def create_nodes(num_nodes, vote_percent): # returns an array of green nodes
+def create_nodes(num_nodes, vote_percent, intervals): # returns an array of green nodes
     voting = round(num_nodes*vote_percent)
     opinions = [1, 0]
     op_array = random.choices(opinions, weights=[voting, num_nodes-voting], k=num_nodes)
@@ -16,10 +17,10 @@ def create_nodes(num_nodes, vote_percent): # returns an array of green nodes
     nodes = []
     for i in range(num_nodes):
         if op_array[i] == 0:
-            uncertainty = round(random.uniform(-1, 0), 2)
+            uncertainty = round(random.uniform(intervals[0], 0), 2)
             nodes.append(green(i, uncertainty, op_array[i]))
         elif op_array[i] == 1:
-            uncertainty = round(random.uniform(0.01, 1), 2)
+            uncertainty = round(random.uniform(0.01, intervals[1]), 2)
             nodes.append(green(i, uncertainty, op_array[i]))
     return nodes
 
@@ -49,6 +50,8 @@ def create_graph(network_file):
     return graph, sorted(unique_nodes_num)
 
 
+
+
 # HELPER FUNCTIONS
 def greenpercentstats(greenarray): 
     voting = 0
@@ -76,6 +79,54 @@ def get_most_uncertain(greenarray):
             uncertain = g.uncertainty
     return uncertain
 
+def minimax(self, green_nodes, num_rounds, agent, opp_ply):
+    # end game condition: if all rounds have been iterated, or red has lost all followers, or red has full control of the population
+    # return message type and overall opinion
+
+    # check if winning/losing
+    if (greenpercentstats(green_nodes) == 0):
+        # everyone does not want to vote, red wins
+        return None, 0
+    elif (greenpercentstats(green_nodes) == 100):
+        # everyone wants to vote, blue wins
+        return None, 100
+    elif isinstance(agent, red) and (abs(agent.uncertainty) < get_most_uncertain(green_nodes)):
+        # red loses all followers, blue wins
+        return None, 100
+    elif isinstance(agent, blue) and (agent.energy == 0):
+        # blue loses all of its energy, red wins
+        return None, 0
+    elif num_rounds == 0:
+        return None, greenpercentstats(green_nodes)
+
+    # recursion starts here
+    if isinstance(agent, red):
+        overall_opinion = 100
+        propaganda_types = [agent.create_propaganda(1), agent.create_propaganda(2), agent.create_propaganda(3), agent.create_propaganda(4), agent.create_propaganda(5)]
+        msg_type = random.choice(message_types)
+
+        for p in propaganda_types:
+            green_node_copy = green_nodes.copy()
+            updated_nodes = agent.spread_misinformation(green_node_copy, p)[0]
+            opinion_post_spread = minimax(updated_nodes, num_rounds-1, "blue")[1]
+            if opinion_post_spread < overall_opinion:
+                msg_type = p
+                overall_opinion = opinion_post_spread
+    
+    elif isinstance(agent, blue):
+        overall_opinion = 0
+        message_types = []
+        msg_type = random.choice(message_types)
+
+        for m in message_types:
+            green_node_copy = green_nodes.copy()
+            updated_nodes = agent.spread_message(green_node_copy, m)[0]
+            opinion_post_spread = self.minimax(updated_nodes, num_rounds-1, "red")[1]
+            if opinion_post_spread < overall_opinion:
+                msg_type = m
+                overall_opinion = opinion_post_spread
+    return msg_type, opinion_post_spread
+
 
 # WINNING/LOSING 
 def winning(greenarray, red_agent, blue_agent):
@@ -85,7 +136,6 @@ def winning(greenarray, red_agent, blue_agent):
         blue_agent = red_agent
         red_agent = temp    
     # abs(red_agent.uncertainty) returns the maximum uncertainty red can interact with
-    print(f"Blue agent energy {blue_agent.energy}")
     return (greenpercentstats(greenarray) == 100) or (greenpercentstats(greenarray) == 0) or (abs(red_agent.uncertainty) < get_most_uncertain(greenarray)) or (blue_agent.energy == 0)
 
 def greenabsolutemajoritycheck(greenarray):
@@ -102,11 +152,11 @@ def bluedeathcheck(player, ai):
 
 def reddeathcheck(player, ai, greenarray):
     if isinstance(player, red):
-        print(player.uncertainty)
         return abs(player.uncertainty) < get_most_uncertain(greenarray)
     elif isinstance(ai, red):
-        print(ai.uncertainty)
         return abs(ai.uncertainty) < get_most_uncertain(greenarray)
+
+
 
 
 # GREEN NODE INTERACTION
@@ -150,6 +200,8 @@ def interact(graph, green_array):    #Acts as green's "turn" when all adjacent g
     return green_array
 
 
+
+
 # GAME START-UP
 def initialise():
     # welcome message
@@ -176,14 +228,14 @@ def initialise():
             break
         print("Invalid output. Please try again\n")
     
-    # while True:
-    #     min_interval = input("Minimum interval (between -1 and 1): ")
-    #     max_interval = input("Maximum interval (between -1 and 1): ")
+    while True:
+        min_interval = input("Minimum interval (between -1 and 0): ")
+        max_interval = input("Maximum interval (between 0 and 1): ")
 
-    #     if (float(min_interval.strip().lower()) >= -1) and (float(min_interval.strip().lower()) <= 1) and (float(max_interval.strip().lower()) >= -1) and (float(max_interval.strip().lower()) <= 1):
-    #         if (float(min_interval.strip().lower()) < float(max_interval.strip().lower())):
-    #             break
-    #     print("Invalid output. Please try again\n")
+        if (float(min_interval.strip().lower()) >= -1) and (float(min_interval.strip().lower()) <= 0) and (float(max_interval.strip().lower()) >= 0) and (float(max_interval.strip().lower()) <= 1):
+            if (float(min_interval.strip().lower()) < float(max_interval.strip().lower())):
+                break
+        print("Invalid output. Please try again\n")
     
     while True:
         vote_percent = input("Percentage of people willing to vote (between 0-1): ")
@@ -198,15 +250,16 @@ def initialise():
 
     # start simulation
     # player and ai will have their own colors
-    simulation(float(grayPercent), int(num_rounds), float(vote_percent), player_agent, ai_agent)
+    simulation(float(grayPercent), [float(min_interval), float(max_interval)], int(num_rounds), float(vote_percent), player_agent, ai_agent)
 
-def simulation(grayPercent, num_rounds, vote_percent, player, ai): 
+
+def simulation(grayPercent, intervals, num_rounds, vote_percent, player, ai): 
     rounds = ["red", "blue", "green"] * num_rounds
     # create graph
     graph, num_nodes = create_graph("network-2.csv")
 
     # create array of green nodes
-    green_nodes = create_nodes(len(num_nodes), vote_percent)
+    green_nodes = create_nodes(len(num_nodes), vote_percent, intervals)
     for g in green_nodes:
         print('initial:', g.uncertainty, g.opinion)
     greenstats(green_nodes)
@@ -225,7 +278,6 @@ def simulation(grayPercent, num_rounds, vote_percent, player, ai):
         # check if blue ran out of energy or red ran out of followers
         if winning(green_nodes, player, ai):
             # return name of winning agent 
-            print(winning(green_nodes, player, ai))
             break
             
         # else:
@@ -235,7 +287,7 @@ def simulation(grayPercent, num_rounds, vote_percent, player, ai):
                 green_nodes = player.red_player(green_nodes)
                 # print number of followers
                 greenstats(green_nodes)
-            elif ai == "r":
+            elif isinstance(ai, red):
                 continue
                 # execute minimax(?) function 
             # print percentage of people wanting to vote/ against voting

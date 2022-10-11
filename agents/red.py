@@ -1,4 +1,4 @@
-from functools import update_wrapper
+from game import *
 import random
 
 class propaganda:
@@ -44,6 +44,36 @@ class red:
     #             followers += 1
     #     return followers
 
+    def create_propaganda(self, choice):
+        persuasiveness_decrease = 0
+        potency = 0
+        type = ""
+         
+        if int(choice) == 1:
+            persuasiveness_decrease = 0.025 
+            potency = -0.05
+            type = "Speech of Patriotism"
+        elif int(choice) == 2:
+            persuasiveness_decrease = 0.05 
+            potency = -0.1
+            type = "Propaganda"
+        elif int(choice) == 3:
+            persuasiveness_decrease = 0.075 
+            potency = -0.15
+            type = "Conspiracy"
+        elif int(choice) == 4:
+            persuasiveness_decrease = 0.1
+            potency = -0.2
+            type = "Fake News"
+        elif int(choice) == 5:
+            persuasiveness_decrease = 0.125 
+            potency = -0.25
+            type = "Fear mongering"
+
+        # create message
+        message = propaganda(persuasiveness_decrease, potency, type)
+        return message
+
     def red_player(self, green_nodes):
         print("You have a choice of five types of messages to send out:\n")
 
@@ -61,34 +91,7 @@ class red:
             if int(message_choice) >= 1 and int(message_choice) <= 5:
                 break
             print("Invalid message type.\n")
-        
-        persuasiveness_decrease = 0
-        potency = 0
-        type = ""
-         
-        if int(message_choice) == 1:
-            persuasiveness_decrease = 0.025 
-            potency = -0.05
-            type = "Speech of Patriotism"
-        elif int(message_choice) == 2:
-            persuasiveness_decrease = 0.05 
-            potency = -0.1
-            type = "Propaganda"
-        elif int(message_choice) == 3:
-            persuasiveness_decrease = 0.075 
-            potency = -0.15
-            type = "Conspiracy"
-        elif int(message_choice) == 4:
-            persuasiveness_decrease = 0.1
-            potency = -0.2
-            type = "Fake News"
-        elif int(message_choice) == 5:
-            persuasiveness_decrease = 0.125 
-            potency = -0.25
-            type = "Fear mongering"
-        
-        # create message
-        message = propaganda(persuasiveness_decrease, potency, type)
+        message = self.create_propaganda(message_choice)
         print(f"You have chosen {message.type}!\n")
 
         # spread message
@@ -99,10 +102,22 @@ class red:
             print("after red:", u.uncertainty, u.opinion)
         return updated_nodes
  
-    def red_ai(green_nodes):
+    def red_ai(self, green_nodes):
+        # end game condition: if all rounds have been iterated, or red has lost all followers, or red has full control of the population
         # minimax
         # scoring system: number of nodes that do not want to vote
-        # depth; 2-player
-        return 1
+        # depth = number of rounds 
+        # returns message type
+        return green_nodes
+
+
+
+
+
+
+        
+
+
+
 
 
