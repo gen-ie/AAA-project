@@ -25,17 +25,23 @@ class gray:
         self.uncertainty = uncertainty
         self.allegiance = allegiance
 
-    def deploy_grey(self, greens):
-        MAX_POTENCY = 0.125
+    def deploy_grey(self, greens, gray_percent):
+        potencies = [0.025, 0.05, 0.075, 0.1, 0.125]
+        chosen_message = random.choice(potencies)
+
         if self.allegiance == "red":
-            propaganda = message("red", MAX_POTENCY * -1, "Fear Mongering")
+            msg_types = ["Speech of Patriotism", "Propaganda", "Conspiracy", "Fake News", "Fear mongering"]
+            propaganda = message("red", chosen_message * -1, msg_types[potencies.index(chosen_message)])
+            # print(f"Gray is red team spy! It has chosen to spread {propaganda.type}\n")
             greens = self.spread_misinformation(greens, propaganda)
-            return greens[0]
+            return greens[0], gray_percent - 0.05, propaganda.type 
             
         elif self.allegiance == "blue":
-            propaganda = message("blue", MAX_POTENCY, "ANTIFEAR")
-            greens = self.spread_message(greens, propaganda)
-            return greens
+            msg_types = ["Unifying Speech", "Mass-reporting", "Debunking and Fact-checking", "Law implementation on misinformation", "Democratic rallies"]
+            counter = message("blue", chosen_message, msg_types[potencies.index(chosen_message)])
+            # print(f"Gray gives blue team a hand! It chose to carry out {counter.type}\n")
+            greens = self.spread_message(greens, counter)
+            return greens, gray_percent - 0.1, counter.type
 
     def spread_misinformation(self, array_green, message):
         num_interact = 0

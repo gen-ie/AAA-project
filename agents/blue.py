@@ -14,9 +14,8 @@ class blue:
         self.gray_percent = gray_percent
 
     def blue_player(self, greens, gray_percent):
-        print("did it get through?")
         while True:
-            condition = input("would you like to send a direct message or use a gray agent? (direct or gray)")
+            condition = input("would you like to send a direct message or use a gray agent (direct or gray)? ")
             if condition.strip().lower() in ['direct', 'gray']:
                 break
             print("Invalid input")
@@ -25,11 +24,11 @@ class blue:
             #spread message
             print("Choose:\n")
 
-            print("1: Weak") 
-            print("2: Moderately Weak") 
-            print("3: Good") 
-            print("4: Moderately Strong") 
-            print("5: Strong") 
+            print("1: Unifying Speech") 
+            print("2: Mass-reporting") 
+            print("3: Debunking and Fact-checking") 
+            print("4: Law implementation on misinformation") 
+            print("5: Democratic rallies") 
             print("\n")
 
             print(f"Current energy: {self.energy}\n")
@@ -56,22 +55,28 @@ class blue:
                 updated_greens = self.spread_message(greens, message)
                 self.energy = self.energy - message.energy_cost
                 print(f"Your message has been received. Your remaining energy is {self.energy}")
-                for u in updated_greens:
-                    print("after blue:", u.uncertainty, u.opinion)
+                # for u in updated_greens:
+                #     print("after blue:", u.uncertainty, u.opinion)
                 return updated_greens, gray_percent
                 # print stats of overall opinion(?)
         else:
-            stance = ['blue', 'red']
-            allegiance = random.choices(stance, weights=[gray_percent*10, (1-gray_percent)*10], k=10)
-            print(allegiance)
-            uncertainty = round(random.uniform(0.95, 1), 2)
-            if allegiance[0] == "red":
-                uncertainty *= -1
-            print(gray_percent, "%")
-            print(allegiance[0])
-            gray_agent = gray(uncertainty, allegiance[0])
-            greens = gray_agent.deploy_grey(greens) 
-            return greens, gray_percent - 0.1    
+            uncertainty, allegiance = self.create_gray(gray_percent)
+            gray_agent = gray(uncertainty, allegiance)
+            greens, gray_p, msg = gray_agent.deploy_grey(greens, gray_percent) 
+            print("\nBlue chose to deploy Gray!")
+            if gray_agent.allegiance == "red":
+                print(f"Unfortanetly, it was a spy! It has spread {msg}!")
+            elif gray_agent.allegiance == "blue":
+                print(f"Gray gave blue team a hand! It has carried out {msg}!")
+            return greens, gray_p 
+
+    def create_gray(self, gray_percent):
+        stance = ['blue', 'red']
+        allegiance = random.choices(stance, weights=[gray_percent*10, (1-gray_percent)*10], k=10)
+        uncertainty = round(random.uniform(0.95, 1), 2)
+        if allegiance[0] == "red":
+            uncertainty *= -1
+        return uncertainty, allegiance[0]
 
     def create_counterargument(self, choice):
         energy_cost = 0
@@ -80,23 +85,23 @@ class blue:
         if int(choice) == 1:
             energy_cost = 2
             strength = 0.05
-            type = "weak"
+            type = "Unifying Speech"
         elif int(choice) == 2:
             energy_cost = 4
             strength = 0.1
-            type = "moderately weak"
+            type = "Mass-reporting"
         elif int(choice) == 3:
             energy_cost = 6
             strength = 0.15
-            type = "good"
+            type = "Debunking and Fact-checking"
         elif int(choice) == 4:
             energy_cost = 8
             strength = 0.2
-            type = "moderately strong"
+            type = "Law implementation on misinformation"
         elif int(choice) == 5:
             energy_cost = 10
             strength = 0.25
-            type = "strong"
+            type = "Democratic rallies"
         
         # create message
         message = counterargument(strength, energy_cost, type)

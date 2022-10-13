@@ -13,8 +13,7 @@ class propaganda:
 
 class red:
     '''actions for red agent'''
-    def __init__(self, opinion, uncertainty):
-        self.opinion = opinion
+    def __init__(self, uncertainty):
         self.uncertainty = uncertainty
     
     def spread_misinformation(self, array_green, message):
@@ -101,13 +100,16 @@ class red:
             print("after red:", u.uncertainty, u.opinion)
         return updated_nodes
  
-    def red_ai(self, green_nodes):
-        # end game condition: if all rounds have been iterated, or red has lost all followers, or red has full control of the population
-        # minimax
-        # scoring system: number of nodes that do not want to vote
-        # depth = number of rounds 
-        # returns message type
-        return green_nodes
+    # def red_ai(self, green_nodes):
+    #     # end game condition: if all rounds have been iterated, or red has lost all followers, or red has full control of the population
+    #     # minimax
+    #     # scoring system: number of nodes that do not want to vote
+    #     # learning: red must know blues energy status/ if blue keeps spamming gray, they must be low on energy
+    #     # depth = number of rounds 
+    #     # returns message type
+    #     return green_nodes
+    
+    # def blue_stats(): # keeps track of enemy stats: their energy (gray spy percentage too?)
 
 
 
