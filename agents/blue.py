@@ -36,9 +36,12 @@ class blue:
 
             while True:
                 choice = input("Please type the number of your choice (between 1 to 5): ")
-                if  int(choice) >= 1 and  int(choice) <= 5:
-                    break
-                print("Invalid message. Try again. \n")
+                try:
+                    if  int(choice) >= 1 and  int(choice) <= 5:
+                        break
+                    print("Invalid message. Try again. \n")
+                except ValueError:
+                    print("Invalid output. Please try again\n")
             
             message = self.create_counterargument(choice)
             print(f"You have chosen {message.type}!\n")

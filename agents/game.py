@@ -69,7 +69,7 @@ def greenstats(greenarray):
     for g in range(len(greenarray)):
         if greenarray[g].opinion == 1:
             voting += 1
-    print(f"number of green nodes: {len(greenarray)}")
+    #print(f"number of green nodes: {len(greenarray)}")
     votepercent = (voting/len(greenarray))*100
     print(f"Voting: {votepercent}%")
     print(f"Not voting: {100 - votepercent}%\n")
@@ -265,7 +265,7 @@ def spreads_message(greenarray, message, agent):
 # GAME START-UP
 def initialise():
     # welcome message
-    print("insert welcome message\n")
+    print("\nWelcome to the Politics Simulator!! Here we have two political groups, red and blue, fighting for dominance in an all out battle to win the people's hearts! **kyaah!**\n")
 
     while True:
         player_agent = input("Please choose an agent (r or b): ")
@@ -275,40 +275,54 @@ def initialise():
     
     ai_agent = "b"  
     if player_agent.strip().lower() == "r":
-        print("\n You are a red agent! Your goal is to make everyone confused and \n")
+        print("\nYou are a red agent! Your job is chaos. To win the game, you have to make sure that\neveryone confused and do not want to vote due to conflicting information.\n")
     if player_agent.strip().lower() == "b":
         ai_agent = "r"
-        print("\ninsert role of blue\n")
+        print("\nYou are a blue agent! Your job is stop red from doing its nefarious schemes. To win the game, you must fight back red's\nadvances. Make sure everyone knows the truths.Make sure everyone knows the truth, and are confindent of their votes.\n")
 
     # validation of inputs
     print("\nPlease state the following parameters")
     while True:
         grayPercent = input("Percentage of gray working for blue (between 0-1): ")
         # if isinstance(grayPercent, "int"):
-        if float(grayPercent.strip().lower()) >= 0 and float(grayPercent.strip().lower()) <= 1:
-            break
-        print("Invalid output. Please try again\n")
-    
+        try:
+            float(grayPercent.strip().lower())
+            if float(grayPercent.strip().lower()) >= 0 and float(grayPercent.strip().lower()) <= 1:
+                break
+            print("Invalid output. Please try again\n")
+        except ValueError:
+            print("Invalid output. Please try again\n")
+            
     while True:
         min_interval = input("Minimum interval (between -1 and 0): ")
         max_interval = input("Maximum interval (between 0 and 1): ")
-
-        if (float(min_interval.strip().lower()) >= -1) and (float(min_interval.strip().lower()) <= 0) and (float(max_interval.strip().lower()) >= 0) and (float(max_interval.strip().lower()) <= 1):
-            if (float(min_interval.strip().lower()) < float(max_interval.strip().lower())):
-                break
-        print("Invalid output. Please try again\n")
+        
+        try:
+            if (float(min_interval.strip().lower()) >= -1) and (float(min_interval.strip().lower()) <= 0) and (float(max_interval.strip().lower()) >= 0) and (float(max_interval.strip().lower()) <= 1):
+                if (float(min_interval.strip().lower()) < float(max_interval.strip().lower())):
+                    break
+            print("Invalid output. Please try again\n")
+        except ValueError:
+            print("Invalid output. Please try again\n")
     
     while True:
-        vote_percent = input("Percentage of people willing to vote (between 0-1): ")
-        if float(vote_percent.strip().lower()) >= 0 and float(vote_percent.strip().lower()) <= 1:
-            break
-        print("Invalid output. Please try again\n")
+        try: 
+            vote_percent = input("Percentage of people willing to vote (between 0-1): ")
+            if float(vote_percent.strip().lower()) >= 0 and float(vote_percent.strip().lower()) <= 1:
+                break
+            print("Invalid output. Please try again\n")
+        except ValueError:
+            print("Invalid output. Please try again\n")
+        
     while True:
-        num_rounds = input("Number of days before election day (positive numbers only): ")
-        if int(num_rounds.strip().lower()) > 0:
-            break
-        print("Invalid output. Please try again\n")
-
+        try:
+            num_rounds = input("Number of days before election day (positive numbers only): ")
+            if int(num_rounds.strip().lower()) > 0:
+                break
+            print("Invalid output. Please try again\n")
+        except ValueError:
+            print("Invalid output. Please try again\n")
+            
     # start simulation
     # player and ai will have their own colors
     simulation(float(grayPercent), [float(min_interval), float(max_interval)], int(num_rounds), float(vote_percent), player_agent, ai_agent)
@@ -351,7 +365,7 @@ def simulation(grayPercent, intervals, num_rounds, vote_percent, player, ai):
         if r == "red":
             if isinstance(player, red):
                 # execute player interactive function
-                print("red before:", player.uncertainty)
+                #print("red before:", player.uncertainty)
                 green_nodes = player.red_player(green_nodes)
                 # print number of followers
                 print("red uncertainty after:", player.uncertainty)
@@ -361,6 +375,8 @@ def simulation(grayPercent, intervals, num_rounds, vote_percent, player, ai):
                 # copies of the agent for minimax
                 ai_copy = red(ai.uncertainty)
                 player_copy = blue(player.energy, player.unsureness, player.gray_percent)
+                print(f"Current uncertainty: {ai.uncertainty}")
+                print(f"Current number of followers:")
 
                 print(ai.uncertainty)
                 greenforever = []
@@ -368,7 +384,7 @@ def simulation(grayPercent, intervals, num_rounds, vote_percent, player, ai):
                     greenforever.append(node.uncertainty)
                 bestmessage = minimax(green_nodes, num_rounds, ai_copy, player, grayPercent)[0]
                 print(ai.uncertainty)
-                print(f"Opponent chose {bestmessage.type}")
+                print(f"Opponent chose: {bestmessage.type}")
                 for i in range(len(green_nodes)):
                     green_nodes[i].uncertainty = greenforever[i]  
                     if green_nodes[i].uncertainty > 0:
@@ -398,15 +414,16 @@ def simulation(grayPercent, intervals, num_rounds, vote_percent, player, ai):
                 # copies of the agent for minimax
                 ai_copy = blue(ai.energy, ai.unsureness, ai.gray_percent)
                 player_copy = red(player.uncertainty)
-                print(f"energy is {ai.energy}")
+                print(f"Current energy: {ai.energy}")
+                print(f"Blue's unsureness: {ai.unsureness}\n")
 
                 greenforever = []
                 for node in green_nodes:
                     greenforever.append(node.uncertainty)
                 bestmessage = minimax(green_nodes, num_rounds, ai_copy, player_copy, grayPercent)[0]
-                print("red:", player.uncertainty)
+                # print("red:", player.uncertainty)
                 if isinstance(bestmessage, counterargument):
-                    print(f"Opponent chose {bestmessage.type}")
+                    print(f"Opponent chose: {bestmessage.type}\n")
                     # ai.energy -= bestmessage.energy_cost
                     for i in range(len(green_nodes)):
                         green_nodes[i].uncertainty = greenforever[i]  

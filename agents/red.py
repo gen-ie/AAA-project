@@ -75,19 +75,25 @@ class red:
         print("5: Fear mongering (Indoctrinate the people through scare tactics) - heavily potent message. Can only affect uncertain people (uncertainty of below 0)") 
         print("\n")
 
+        print(f"Current uncertainty: {self.uncertainty}")
         print(f"Current number of followers: {len(green_nodes)}\n")
 
         while True:
-            message_choice = input("Please type the number of your choice (between 1 to 5): ")
-            if int(message_choice) >= 1 and int(message_choice) <= 5:
-                break
-            print("Invalid message type.\n")
+            try:
+                message_choice = input("Please type the number of your choice (between 1 to 5): ")
+                if int(message_choice) >= 1 and int(message_choice) <= 5:
+                    break
+                print("Invalid message type.\n")
+            except ValueError:
+                print("Invalid message type.\n")
+
         message = self.create_propaganda(message_choice)
         print(f"You have chosen {message.type}!\n")
 
         # spread message
         updated_nodes, num_interact = self.spread_misinformation(green_nodes, message)
-        print(f"You have interacted with {num_interact} nodes\n\n")
+        print(f"You have interacted with {num_interact} nodes")
+        print(f"Updated uncertainty: {self.uncertainty}\n")
         # print stats of overall opinion
         for u in updated_nodes:
             print("after red:", u.uncertainty, u.opinion)
