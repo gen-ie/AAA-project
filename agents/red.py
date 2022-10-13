@@ -68,11 +68,11 @@ class red:
     def red_player(self, green_nodes):
         print("You have a choice of five types of messages to send out:\n")
 
-        print("1: Speech of Patriotism (Showcase your loyalty to sway people) - tame message. Can affect most people (uncertainty below 0.8)") 
-        print("2: Propaganda (Boast your accomplisments) - moderately tame message. Can affect a lot of people (uncertainty below 0.6)") 
-        print("3: Conspiracy (Suggest ideas to unspecting citizens) - moderately effective message. Can affect some people (uncertainty below 0.4)") 
-        print("4: Fake News (Fabricate evidence in order to succeed) - highly effective message. Can affect only a handful of certain people (uncertainty below 0.2)") 
-        print("5: Fear mongering (Indoctrinate the people through scare tactics) - heavily potent message. Can only affect uncertain people (uncertainty of below 0)") 
+        print("1: Speech of Patriotism (Showcase your loyalty to sway people) - tame message") 
+        print("2: Propaganda (Boast your accomplisments) - moderately tame message. Can affect a lot of people") 
+        print("3: Conspiracy (Suggest ideas to unspecting citizens) - moderately effective message. Can affect some people") 
+        print("4: Fake News (Fabricate evidence in order to succeed) - highly effective message. Can affect only a handful of certain people") 
+        print("5: Fear mongering (Indoctrinate the people through scare tactics) - heavily potent message. Can only affect uncertain people") 
         print("\n")
 
         print(f"Current uncertainty: {self.uncertainty}")
@@ -94,9 +94,6 @@ class red:
         updated_nodes, num_interact = self.spread_misinformation(green_nodes, message)
         print(f"You have interacted with {num_interact} nodes")
         print(f"Updated uncertainty: {self.uncertainty}\n")
-        # print stats of overall opinion
-        for u in updated_nodes:
-            print("after red:", u.uncertainty, u.opinion)
         return updated_nodes
  
     # def red_ai(self, green_nodes):

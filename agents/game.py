@@ -336,7 +336,7 @@ def simulation(grayPercent, intervals, num_rounds, vote_percent, player, ai):
     # create array of green nodes
     green_nodes = create_nodes(len(num_nodes), vote_percent, intervals)
     for g in green_nodes:
-        print('initial:', g.uncertainty, g.opinion)
+        print('Initial:', g.uncertainty, g.opinion)
     print("\n")
     greenstats(green_nodes)
     # for g in green_nodes:
@@ -368,7 +368,10 @@ def simulation(grayPercent, intervals, num_rounds, vote_percent, player, ai):
                 #print("red before:", player.uncertainty)
                 green_nodes = player.red_player(green_nodes)
                 # print number of followers
-                print("red uncertainty after:", player.uncertainty)
+                # print("red uncertainty After:", player.uncertainty)
+                for g in green_nodes:
+                    print('After red:', round(g.uncertainty, 2), g.opinion)
+                print("\n")
                 greenstats(green_nodes)
 
             elif isinstance(ai, red):
@@ -395,7 +398,8 @@ def simulation(grayPercent, intervals, num_rounds, vote_percent, player, ai):
                 green_nodes = spreads_message(green_nodes, bestmessage, ai)
                 
                 for g in green_nodes:
-                    print('after red:', g.uncertainty, g.opinion)
+                    print('After red:', round(g.uncertainty, 2), g.opinion)
+                print("\n")
                 greenstats(green_nodes)
             # print percentage of people wanting to vote/ against voting
         
@@ -406,8 +410,9 @@ def simulation(grayPercent, intervals, num_rounds, vote_percent, player, ai):
                 # if gray was used, update the gray perblue(grcentages (chances of realising a spy increases)
                 grayPercent = updated_gray
                 for g in green_nodes:
-                    print('after blue/gray:', g.uncertainty, g.opinion)
+                    print('After blue/gray:', round(g.uncertainty,2), g.opinion)
                 #print remaining energy
+                print("\n")
                 greenstats(green_nodes)
 
             elif isinstance(ai, blue):
@@ -448,13 +453,15 @@ def simulation(grayPercent, intervals, num_rounds, vote_percent, player, ai):
                         print(f"Gray gives blue a hand! It carried out {msg}\n\n")
 
                 for g in green_nodes:
-                    print('after blue/gray:', g.uncertainty, g.opinion)
+                    print('After blue/gray:', round(g.uncertainty, 2), g.opinion)
+                print("\n")
                 greenstats(green_nodes)
 
         elif r == "green":
             green_nodes = interact(graph, green_nodes)
             for g in green_nodes:
-                print('after interaction:', g.uncertainty, g.opinion)
+                print('After interaction:', round(g.uncertainty, 2), g.opinion)
+            print("\n")
             greenstats(green_nodes)
             
     if bluedeathcheck(player,ai):
