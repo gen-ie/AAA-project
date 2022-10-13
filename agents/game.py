@@ -89,10 +89,10 @@ def minimax(green_nodes, num_rounds, agent, opp_ply, gray_percent, initialgreens
     elif (greenpercentstats(green_nodes) == 100):
         # everyone wants to vote, blue wins
         return None, 100
-    elif isinstance(agent, red) and (abs(agent.uncertainty) < get_most_uncertain(green_nodes)):
+    elif isinstance(agent, red) and ((abs(agent.uncertainty) < get_most_uncertain(green_nodes)) or (agent.uncertainty >= 0 )):
         # red loses all followers, blue wins
         return None, 100
-    elif isinstance(agent, blue) and (agent.energy == 0):
+    elif isinstance(agent, blue) and (agent.energy <= 0):
         # blue loses all of its energy, red wins
         return None, 0
     elif num_rounds == 0:
@@ -133,7 +133,7 @@ def minimax(green_nodes, num_rounds, agent, opp_ply, gray_percent, initialgreens
             opinion_post_spread = minimax(updated_nodes, num_rounds-1, opp_ply, agent, gray_p, greensconstant)[1]
             # print("blue change:", opinion_post_spread)
             if opinion_post_spread > overall_opinion:
-                msg_type = message_types[5]
+                msg_type = m
                 overall_opinion = opinion_post_spread
     # print(f"{overall_opinion}")
     return msg_type, overall_opinion, initialgreens
@@ -147,7 +147,7 @@ def winning(greenarray, red_agent, blue_agent):
         blue_agent = red_agent
         red_agent = temp    
     # abs(red_agent.uncertainty) returns the maximum uncertainty red can interact with
-    return (greenpercentstats(greenarray) == 100) or (greenpercentstats(greenarray) == 0) or (abs(red_agent.uncertainty) < get_most_uncertain(greenarray)) or (blue_agent.energy == 0)
+    return (greenpercentstats(greenarray) == 100) or (greenpercentstats(greenarray) == 0) or (abs(red_agent.uncertainty) < get_most_uncertain(greenarray)) or (red_agent.uncertainty >= 0 ) or (blue_agent.energy <= 0)
 
 def greenabsolutemajoritycheck(greenarray):
     if (greenstats(greenarray) == 100):
@@ -157,15 +157,15 @@ def greenabsolutemajoritycheck(greenarray):
 
 def bluedeathcheck(player, ai):
     if isinstance(player, blue):
-        return player.energy==0
+        return player.energy <= 0
     elif isinstance(ai, blue):
-        return ai.energy==0
+        return ai.energy <= 0
 
 def reddeathcheck(player, ai, greenarray):
     if isinstance(player, red):
-        return abs(player.uncertainty) < get_most_uncertain(greenarray)
+        return abs(player.uncertainty) < get_most_uncertain(greenarray) or (player.uncertainty >= 0 )
     elif isinstance(ai, red):
-        return abs(ai.uncertainty) < get_most_uncertain(greenarray)
+        return abs(ai.uncertainty) < get_most_uncertain(greenarray) or (ai.uncertainty >= 0 )
 
 
 
@@ -210,19 +210,36 @@ def interact(graph, green_array):    #Acts as green's "turn" when all adjacent g
                 green_array[influencer.id] = influencer
     return green_array
 
-def spreads_message(greenarray, potency):
+def spreads_message(greenarray, message, agent):
     for node in greenarray:
-        # print(node.uncertainty)
-        # print(f"potency = {potency}")
-        node.uncertainty += potency
-        if node.uncertainty > 1:
-            node.uncertainty = 1    
-        if node.uncertainty < -1:
-            node.uncertainty = -1   
-        if node.uncertainty > 0:
-            node.opinion = 1
-        elif node.uncertainty <= 0:
-            node.opinion = 0
+        if isinstance(agent, red) and (abs(agent.uncertainty) >= node.uncertainty):
+            print("red uncertainty:", agent.uncertainty)
+            node.uncertainty += message.potency
+            if node.uncertainty > 1:
+                node.uncertainty = 1    
+            if node.uncertainty < -1:
+                node.uncertainty = -1   
+            if node.uncertainty > 0:
+                node.opinion = 1
+            elif node.uncertainty <= 0:
+                node.opinion = 0
+            
+        elif isinstance(agent, blue) and ((agent.uncertainty * -1) <= node.uncertainty):
+            print("blue uncertainty:", agent.uncertainty)
+            node.uncertainty += message.strength
+            if node.uncertainty > 1:
+                node.uncertainty = 1    
+            if node.uncertainty < -1:
+                node.uncertainty = -1   
+            if node.uncertainty > 0:
+                node.opinion = 1
+            elif node.uncertainty <= 0:
+                node.opinion = 0
+
+    if isinstance(agent, red):           
+        agent.uncertainty += message.follower_lose
+    elif isinstance(agent, blue):
+        agent.energy -= message.energy_cost
     return greenarray
 
 
@@ -295,15 +312,15 @@ def simulation(grayPercent, intervals, num_rounds, vote_percent, player, ai):
     # create agents
     if player == "r":
         player = red(round(random.uniform(-0.95, -1), 2))
-        ai = blue(70, grayPercent)
+        ai = blue(70, round(random.uniform(0.95, 1), 2), grayPercent)
     else:
-        player = blue(70, grayPercent)
+        player = blue(70, round(random.uniform(0.95, 1), 2), grayPercent)
         ai = red(round(random.uniform(-0.95, -1), 2))
     
     if isinstance(player,blue):
         print(f"player is blue")
-    elif isinstance(ai,blue):
-        print(f"ai is blue")
+    if isinstance(ai,red):
+        print(f"ai is has uncertainty: {ai.uncertainty}")
 
     for r in rounds:
         # check if blue ran out of energy or red ran out of followers
@@ -317,14 +334,17 @@ def simulation(grayPercent, intervals, num_rounds, vote_percent, player, ai):
                 # execute player interactive function
                 green_nodes = player.red_player(green_nodes)
                 # print number of followers
+                print("red uncertainty:", player.uncertainty)
                 greenstats(green_nodes)
-                # for node in green_nodes:
-                #     print(f"should be {node.uncertainty}")
+
             elif isinstance(ai, red):
                 greenforever = []
+                ai_copy = red(ai.uncertainty)
+                print(ai.uncertainty)
                 for node in green_nodes:
                     greenforever.append(node.uncertainty)
-                bestmessage, value, greensconstant = minimax(green_nodes, num_rounds//2, ai, player, grayPercent, green_nodes)
+                bestmessage, value, greensconstant = minimax(green_nodes, num_rounds//2, ai_copy, player, grayPercent, green_nodes)
+                print(ai.uncertainty)
                 print(f"Opponent chose {bestmessage.type}")
                 for i in range(len(green_nodes)):
                     green_nodes[i].uncertainty = greenforever[i]  
@@ -332,8 +352,8 @@ def simulation(grayPercent, intervals, num_rounds, vote_percent, player, ai):
                         green_nodes[i].opinion = 1
                     elif green_nodes[i].uncertainty <= 0:
                         green_nodes[i].opinion = 0
-                green_nodes = spreads_message(green_nodes, bestmessage.potency)
-                # execute minimax(?) function 
+                print(ai.uncertainty)
+                green_nodes = spreads_message(green_nodes, bestmessage, ai)
                 
                 for g in green_nodes:
                     print('after red:', g.uncertainty, g.opinion)
@@ -350,12 +370,17 @@ def simulation(grayPercent, intervals, num_rounds, vote_percent, player, ai):
                     print('after blue/gray:', g.uncertainty, g.opinion)
                 #print remaining energy
                 greenstats(green_nodes)
+
             elif isinstance(ai, blue):
+                # copies of the agent for minimax
+                ai_copy = blue(ai.energy, ai.uncertainty, ai.gray_percent)
+                player_copy = red(ai.uncertainty)
+
                 greenforever = []
                 for node in green_nodes:
                     greenforever.append(node.uncertainty)
-                bestmessage, value, greensconstant = minimax(green_nodes, num_rounds//2, ai, player, grayPercent, green_nodes)
-
+                bestmessage, value, greensconstant = minimax(green_nodes, num_rounds//2, ai_copy, player_copy, grayPercent, green_nodes)
+                print("red:", player.uncertainty)
                 if isinstance(bestmessage, counterargument):
                     print(f"Opponent chose {bestmessage.type}")
                     ai.energy -= bestmessage.energy_cost
@@ -365,10 +390,10 @@ def simulation(grayPercent, intervals, num_rounds, vote_percent, player, ai):
                             green_nodes[i].opinion = 1
                         elif green_nodes[i].uncertainty <= 0:
                             green_nodes[i].opinion = 0
-                    green_nodes = spreads_message(green_nodes, bestmessage.strength)
+                    green_nodes = spreads_message(green_nodes, bestmessage, ai)
 
                 elif isinstance(bestmessage, gray):
-                    print(f"Opponent chose to deploy an Gray agent!")
+                    print(f"Opponent chose to deploy a Gray agent!")
                     for i in range(len(green_nodes)):
                         green_nodes[i].uncertainty = greenforever[i]  
                         if green_nodes[i].uncertainty > 0:

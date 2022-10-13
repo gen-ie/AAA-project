@@ -9,8 +9,9 @@ class counterargument:
 
 class blue:
     #actions for blue agent
-    def __init__(self, energy, gray_percent):
+    def __init__(self, energy, uncertainty, gray_percent):
         self.energy = energy
+        self.uncertainty = uncertainty
         self.gray_percent = gray_percent
 
     def blue_player(self, greens, gray_percent):
@@ -124,13 +125,16 @@ class blue:
 
     def spread_message(self, greenarray, counterargument):
         for node in greenarray:
-            node.uncertainty += counterargument.strength
-            if node.uncertainty > 1:
-                node.uncertainty = 1    
-            if node.uncertainty > 0:
-                node.opinion = 1
-            elif node.uncertainty <= 0:
-                node.opinion = 0
+            # uncertainty of blue: blue can only shift nodes that have (self.uncertainty * -1) or more
+            # Example: lets say blue has an uncertainty of 0.99, it can only persuade nodes with uncertainties -0.99 and above
+            if (self.uncertainty * -1) <= node.uncertainty:
+                node.uncertainty += counterargument.strength
+                if node.uncertainty > 1:
+                    node.uncertainty = 1    
+                if node.uncertainty > 0:
+                    node.opinion = 1
+                elif node.uncertainty <= 0:
+                    node.opinion = 0
         return greenarray
     
     def deploy_grey(self, gray_percent, greens):
