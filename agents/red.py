@@ -35,13 +35,6 @@ class red:
         self.uncertainty += message.follower_lose
         return array_green, num_interact
 
-    # def num_followers(self, green_nodes):
-    #     followers = 0
-    #     for g in green_nodes:
-    #         if g.uncertainty <= abs(self.uncertainty):
-    #             followers += 1
-    #     return followers
-
     def create_propaganda(self, choice):
         persuasiveness_decrease = 0
         potency = 0

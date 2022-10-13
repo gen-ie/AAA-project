@@ -332,14 +332,16 @@ def simulation(grayPercent, intervals, num_rounds, vote_percent, player, ai):
         if r == "red":
             if isinstance(player, red):
                 # execute player interactive function
+                print("red before:", player.uncertainty)
                 green_nodes = player.red_player(green_nodes)
                 # print number of followers
-                print("red uncertainty:", player.uncertainty)
+                print("red uncertainty after:", player.uncertainty)
                 greenstats(green_nodes)
 
             elif isinstance(ai, red):
                 greenforever = []
                 ai_copy = red(ai.uncertainty)
+
                 print(ai.uncertainty)
                 for node in green_nodes:
                     greenforever.append(node.uncertainty)
@@ -406,17 +408,10 @@ def simulation(grayPercent, intervals, num_rounds, vote_percent, player, ai):
                     else:
                         print(f"Gray gives blue a hand! It carried out {msg}\n\n")
 
-                # for node in green_nodes:
-                #     print(f"greennodes {node.uncertainty}")
-                #print(f"type = {bestmessage.type}")
-                # green_nodes, updated_gray = ai.blue(green_nodes, grayPercent)
-                # # if gray was used, update the gray percentages (chances of realising a spy increases)
-                # grayPercent = updated_gray
                 for g in green_nodes:
                     print('after blue/gray:', g.uncertainty, g.opinion)
                 greenstats(green_nodes)
-                # execute minimax(?) function 
-                # print percentage of people wanting to vote/ against voting 
+
         elif r == "green":
             green_nodes = interact(graph, green_nodes)
             for g in green_nodes:
@@ -445,78 +440,6 @@ def simulation(grayPercent, intervals, num_rounds, vote_percent, player, ai):
         print(f"Red has won the game\n")
     else:
         print(f"It's a draw\n")
-
-
-
-
-
-    '''
-    winner = max(for_voting, against_voting)
-    if winner == for_voting:
-        print("Blue wins!!\n")
-    elif winner == against_voting:
-        print("Red wins!!\n")
-    else:
-        print("It's a draw\n")'''
-    '''runs the game until either a) win condition is met or b) all rounds have been executed'''
-    
-    '''
-    winning conditions
-    if blue can no longer act (lost all energy), red wins
-    if red can no longer act (lost all followers), blue wins
-    election day (set simulation rounds)
-    '''
-
-    '''
-    winning_conditions = false
-    sim_counter = 0
-    winner = 
-
-    while (winning conditions are not true) or sim_counter < number of rounds:
-        #create red agent object 
-        red = Red(round(random.uniform(0.7, 1), 2))
-
-        #ask player to choose message
-
-        #make red agent interact with greens with message of choice / returns a counter of green agents it has interacted with
-        red_progress = spread_misinformation(graph, agent, message chosen by player)
-        if red_progress == 0 (if red ran out of followers):
-            winner = blue
-            winning_conditions = true
-
-        run blue interact with all green with a counter / deploy a gray agent
-    initialise
-        blue = BlueAgent(energy)
-        action : select either deploy gray agent of directly from blue
-        if (direct)
-            if(countmessage.energy >= energy)
-                print("insufficient energy, your game loss if this message is chosen")
-                if (continue chosen)
-                    #red is winner
-                    winner = red
-                    game end() #return winner and final state(?)
-                else
-                    back to action
-            counterpropaganda(population, countermessage) #interact with all green population
-            energy -= countermessage.energycost
-        else
-            deploy_gray_agent(message, countermessage, probability) #message from red, countermessage from blue, chance of grey being red/blue
- 
-        run green to interact with other greens
-
-        #if (sim_counter == number of rounds - 1 (if last round has been reached -> election day):
-        check the state of the graph (iterate through the graph and count how many greens want to vote or abstain from voting)
-        if (vote > abstain):
-            winner = blue
-        elif (vote < abstain):
-            winner = red
-        else:
-            winner = there is no clear winner
-
-        sim_counter += 1
-     
-     return winner
-    '''
 
 # create_graph("network-2.csv", [*range(25)])
 initialise()
