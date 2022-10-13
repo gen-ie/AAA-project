@@ -45,11 +45,11 @@ class red:
             potency = -0.05
             type = "Speech of Patriotism"
         elif int(choice) == 2:
-            persuasiveness_decrease = 0.05 
+            persuasiveness_decrease = 0.05
             potency = -0.1
             type = "Propaganda"
         elif int(choice) == 3:
-            persuasiveness_decrease = 0.075 
+            persuasiveness_decrease = 0.075
             potency = -0.15
             type = "Conspiracy"
         elif int(choice) == 4:
@@ -57,7 +57,7 @@ class red:
             potency = -0.2
             type = "Fake News"
         elif int(choice) == 5:
-            persuasiveness_decrease = 0.125 
+            persuasiveness_decrease = 0.125
             potency = -0.25
             type = "Fear mongering"
 

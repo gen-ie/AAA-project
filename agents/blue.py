@@ -9,9 +9,9 @@ class counterargument:
 
 class blue:
     #actions for blue agent
-    def __init__(self, energy, uncertainty, gray_percent):
+    def __init__(self, energy, unsureness, gray_percent):
         self.energy = energy
-        self.uncertainty = uncertainty
+        self.unsureness = unsureness
         self.gray_percent = gray_percent
 
     def blue_player(self, greens, gray_percent):
@@ -57,12 +57,12 @@ class blue:
                 self.energy = self.energy - message.energy_cost
                 print(f"Your message has been received. Your remaining energy is {self.energy}")
                 # for u in updated_greens:
-                #     print("after blue:", u.uncertainty, u.opinion)
+                #     print("after blue:", u.unsureness, u.opinion)
                 return updated_greens, gray_percent
                 # print stats of overall opinion(?)
         else:
-            uncertainty, allegiance = self.create_gray(gray_percent)
-            gray_agent = gray(uncertainty, allegiance)
+            unsureness, allegiance = self.create_gray(gray_percent)
+            gray_agent = gray(unsureness, allegiance)
             greens, gray_p, msg = gray_agent.deploy_grey(greens, gray_percent) 
             print("\nBlue chose to deploy Gray!")
             if gray_agent.allegiance == "red":
@@ -74,10 +74,10 @@ class blue:
     def create_gray(self, gray_percent):
         stance = ['blue', 'red']
         allegiance = random.choices(stance, weights=[gray_percent*10, (1-gray_percent)*10], k=10)
-        uncertainty = round(random.uniform(0.95, 1), 2)
+        unsureness = round(random.uniform(0.95, 1), 2)
         if allegiance[0] == "red":
-            uncertainty *= -1
-        return uncertainty, allegiance[0]
+            unsureness *= -1
+        return unsureness, allegiance[0]
 
     def create_counterargument(self, choice):
         energy_cost = 0
@@ -125,9 +125,9 @@ class blue:
 
     def spread_message(self, greenarray, counterargument):
         for node in greenarray:
-            # uncertainty of blue: blue can only shift nodes that have (self.uncertainty * -1) or more
-            # Example: lets say blue has an uncertainty of 0.99, it can only persuade nodes with uncertainties -0.99 and above
-            if (self.uncertainty * -1) <= node.uncertainty:
+            # unsureness of blue: blue can only shift nodes that have (self.unsureness * -1) or more
+            # Example: lets say blue has an unsureness of 0.99, it can only persuade nodes with uncertainties -0.99 and above
+            if (self.unsureness * -1) <= node.uncertainty:
                 node.uncertainty += counterargument.strength
                 if node.uncertainty > 1:
                     node.uncertainty = 1    

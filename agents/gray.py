@@ -48,7 +48,7 @@ class gray:
         for green in array_green:
             # to determine which nodes red can interact with: take the absolute value of red as maximum uncertainty red can interact with
             # example: let red have an uncertainty of -0.91; taking the absolute value, red can interact with green nodes with uncertainty 0.91 and below
-            # red cannot gain back its persuasive power 
+            # red cannot gain back its persuasive power
             if abs(self.uncertainty) >= green.uncertainty:
                 num_interact += 1
                 #change the uncertainty of node
@@ -62,13 +62,14 @@ class gray:
 
     def spread_message(self, greenarray, message):
         for node in greenarray:
-            node.uncertainty += message.potency
-            if node.uncertainty > 1:
-                node.uncertainty = 1
-            elif node.uncertainty < 0:
-                node.uncertainty = 0  
-            if node.uncertainty > 0:
-                node.opinion = 1
-            elif node.uncertainty <= 0:
-                node.opinion = 0
+            if (self.uncertainty * -1) <= node.uncertainty:
+                node.uncertainty += message.potency
+                if node.uncertainty > 1:
+                    node.uncertainty = 1
+                elif node.uncertainty < -1:
+                    node.uncertainty = -1  
+                if node.uncertainty > 0:
+                    node.opinion = 1
+                elif node.uncertainty <= 0:
+                    node.opinion = 0
         return greenarray
