@@ -1,6 +1,7 @@
 import random
 import sys
 import csv
+from tabulate import tabulate
 
 sys.path.append(".")
 from green import green
@@ -12,10 +13,8 @@ from gray import *
 def create_nodes(num_nodes, vote_percent, intervals): # returns an array of green nodes
     voting = round(num_nodes*vote_percent)
     opinions = ([1]*voting) + ([0]*(num_nodes-voting))
-    #print(opinions)
     random.shuffle(opinions)
     op_array = opinions
-    #print(op_array)
 
     nodes = []
     for i in range(num_nodes):
@@ -201,7 +200,7 @@ def influence(node1, node2):    #Takes a node pair instance and causes an intera
         influenced = node1
     
     # value change 
-    value_change = abs(first - second)*0.333
+    value_change = abs(first - second)*0.2
     if influencer.opinion == 1:
         influenced = influenced.change_uncertainty(influenced, value_change)
     elif influencer.opinion == 0:
@@ -409,9 +408,11 @@ def simulation(grayPercent, intervals, num_rounds, vote_percent, player, ai):
                 green_nodes, updated_gray = player.blue_player(green_nodes, grayPercent)
                 # if gray was used, update the gray perblue(grcentages (chances of realising a spy increases)
                 grayPercent = updated_gray
+                table_green = []
                 for g in green_nodes:
-                    print('After blue/gray:', round(g.uncertainty,2), g.opinion)
+                    table_green.append([round(g.uncertainty,2), g.opinion])
                 #print remaining energy
+                print(tabulate(table_green, headers=["updated uncertainty", "opinion"]))
                 print("\n")
                 greenstats(green_nodes)
 
