@@ -33,17 +33,17 @@ class gray:
             msg_types = ["Speech of Patriotism", "Propaganda", "Conspiracy", "Fake News", "Fear mongering"]
             propaganda = message("red", chosen_message * -1, msg_types[potencies.index(chosen_message)])
             # print(f"Gray is red team spy! It has chosen to spread {propaganda.type}\n")
-            greens = self.spread_misinformation(greens, propaganda)
+            greens = self.spread_misinformation_gr(greens, propaganda)
             return greens[0], gray_percent, propaganda.type 
             
         elif self.allegiance == "blue":
             msg_types = ["Unifying Speech", "Mass-reporting", "Debunking and Fact-checking", "Law implementation on misinformation", "Democratic rallies"]
             counter = message("blue", chosen_message, msg_types[potencies.index(chosen_message)])
             # print(f"Gray gives blue team a hand! It chose to carry out {counter.type}\n")
-            greens = self.spread_message(greens, counter)
+            greens = self.spread_message_gr(greens, counter)
             return greens, gray_percent, counter.type
 
-    def spread_misinformation(self, array_green, message):
+    def spread_misinformation_gr(self, array_green, message):
         num_interact = 0
         for green in array_green:
             # to determine which nodes red can interact with: take the absolute value of red as maximum uncertainty red can interact with
@@ -60,7 +60,7 @@ class gray:
                 green.opinion = 0
         return array_green, num_interact
 
-    def spread_message(self, greenarray, message):
+    def spread_message_gr(self, greenarray, message):
         for node in greenarray:
             if (self.uncertainty * -1) <= node.uncertainty:
                 node.uncertainty += message.potency
