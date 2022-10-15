@@ -33,6 +33,9 @@ class red:
                 green.opinion = 0
         # decrease red's persuasive power
         self.uncertainty += message.follower_lose
+        if self.uncertainty > 0:
+            self.uncertainty = 0
+
         return array_green, num_interact
 
     def create_propaganda(self, choice):
@@ -67,7 +70,6 @@ class red:
 
     def red_player(self, green_nodes):
         print("You have a choice of five types of messages to send out:\n")
-
         print("1: Speech of Patriotism (Showcase your loyalty to sway people) - tame message") 
         print("2: Propaganda (Boast your accomplisments) - moderately tame message. Can affect a lot of people") 
         print("3: Conspiracy (Suggest ideas to unspecting citizens) - moderately effective message. Can affect some people") 

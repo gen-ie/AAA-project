@@ -34,14 +34,14 @@ class gray:
             propaganda = message("red", chosen_message * -1, msg_types[potencies.index(chosen_message)])
             # print(f"Gray is red team spy! It has chosen to spread {propaganda.type}\n")
             greens = self.spread_misinformation(greens, propaganda)
-            return greens[0], gray_percent - 0.05, propaganda.type 
+            return greens[0], gray_percent, propaganda.type 
             
         elif self.allegiance == "blue":
             msg_types = ["Unifying Speech", "Mass-reporting", "Debunking and Fact-checking", "Law implementation on misinformation", "Democratic rallies"]
             counter = message("blue", chosen_message, msg_types[potencies.index(chosen_message)])
             # print(f"Gray gives blue team a hand! It chose to carry out {counter.type}\n")
             greens = self.spread_message(greens, counter)
-            return greens, gray_percent - 0.1, counter.type
+            return greens, gray_percent, counter.type
 
     def spread_misinformation(self, array_green, message):
         num_interact = 0
