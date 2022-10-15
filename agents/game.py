@@ -81,7 +81,7 @@ def get_most_uncertain(greenarray):
             uncertain = g.uncertainty
     return uncertain
 
-def minimax(green_nodes, graph, num_rounds, agent, opp_ply, gray_percent):
+def minimax(green_nodes, graph, num_rounds, agent, opp_ply, gray_percent, intervals):
     # end game condition: if all rounds have been iterated, or red has lost all followers, or red has full control of the population
     # return message type and overall opinion
 
@@ -112,8 +112,8 @@ def minimax(green_nodes, graph, num_rounds, agent, opp_ply, gray_percent):
 
         for p in propaganda_types:
             green_node_copy = green_nodes.copy()
-            updated_nodes = agent.spread_misinformation(green_node_copy, p)[0]
-            opinion_post_spread = minimax(updated_nodes, graph, num_rounds-1, opp_ply, agent, gray_percent)[1]
+            updated_nodes = agent.spread_misinformation(green_node_copy, p, intervals[0])[0]
+            opinion_post_spread = minimax(updated_nodes, graph, num_rounds-1, opp_ply, agent, gray_percent, intervals)[1]
             #print("red change:", opinion_post_spread[0], opinion_post_spread[1])
             if opinion_post_spread < overall_opinion:
                 msg_type = p
@@ -142,13 +142,13 @@ def minimax(green_nodes, graph, num_rounds, agent, opp_ply, gray_percent):
 
             # gray agent
             if isinstance(m, gray):
-                updated_nodes, gray_p = m.deploy_grey(green_node_copy, gray_percent)[:2]
+                updated_nodes, gray_p = m.deploy_grey(green_node_copy, gray_percent, intervals)[:2]
             # blue message
             elif isinstance(m, counterargument):
-                updated_nodes = agent.spread_message(green_node_copy, m)
+                updated_nodes = agent.spread_message(green_node_copy, m, intervals[1])
             # green interaction after blue's turn
             updated_nodes = interact(graph, updated_nodes)
-            opinion_post_spread = minimax(updated_nodes, graph, num_rounds-1, opp_ply, agent, gray_p)[1]
+            opinion_post_spread = minimax(updated_nodes, graph, num_rounds-1, opp_ply, agent, gray_p, intervals)[1]
             # print("blue change:", opinion_post_spread[0], opinion_post_spread[1])
             if opinion_post_spread > overall_opinion:
                 msg_type = m
@@ -227,15 +227,13 @@ def interact(graph, green_array):    #Acts as green's "turn" when all adjacent g
                 green_array[influencer.id] = influencer
     return green_array
 
-def spreads_message(greenarray, message, agent):
+def spreads_message(greenarray, message, agent, intervals):
     for node in greenarray:
         if isinstance(agent, red) and (abs(agent.uncertainty) >= node.uncertainty):
             # print("red uncertainty:", agent.uncertainty)
-            node.uncertainty += message.potency
-            if node.uncertainty > 1:
-                node.uncertainty = 1    
-            if node.uncertainty < -1:
-                node.uncertainty = -1   
+            node.uncertainty += message.potency   
+            if node.uncertainty < intervals[0]:
+                node.uncertainty = intervals[0]  
             if node.uncertainty > 0:
                 node.opinion = 1
             elif node.uncertainty <= 0:
@@ -244,10 +242,8 @@ def spreads_message(greenarray, message, agent):
         elif isinstance(agent, blue) and ((agent.unsureness * -1) <= node.uncertainty):
             #print("blue uncertainty:", agent.unsureness)
             node.uncertainty += message.strength
-            if node.uncertainty > 1:
-                node.uncertainty = 1    
-            if node.uncertainty < -1:
-                node.uncertainty = -1   
+            if node.uncertainty > intervals[1]:
+                node.uncertainty = intervals[1]     
             if node.uncertainty > 0:
                 node.opinion = 1
             elif node.uncertainty <= 0:
@@ -393,7 +389,7 @@ def simulation(grayPercent, intervals, num_rounds, vote_percent, player_a, playe
             if (isinstance(player_a, red) and (non_player == False)):
                 # execute player interactive function
                 #print("red before:", player.uncertainty)
-                green_nodes = player_a.red_player(green_nodes)
+                green_nodes = player_a.red_player(green_nodes, intervals)
                 # print number of followers
                 # print("red uncertainty After:", player.uncertainty)
                 for g in green_nodes:
@@ -418,7 +414,7 @@ def simulation(grayPercent, intervals, num_rounds, vote_percent, player_a, playe
                 greenforever = []
                 for node in green_nodes:
                     greenforever.append(node.uncertainty)
-                bestmessage_r = minimax(green_nodes, graph, num_rounds, ai_copy, player_copy, grayPercent)[0]
+                bestmessage_r = minimax(green_nodes, graph, num_rounds, ai_copy, player_copy, grayPercent, intervals)[0]
                 # print(player_b.uncertainty)
                 print(f"Red chose: {bestmessage_r.type}")
                 for i in range(len(green_nodes)):
@@ -429,9 +425,9 @@ def simulation(grayPercent, intervals, num_rounds, vote_percent, player_a, playe
                         green_nodes[i].opinion = 0
                 # print(player_b.uncertainty)
                 if (isinstance(player_b, red) and (non_player == False)):
-                    green_nodes = spreads_message(green_nodes, bestmessage_r, player_b)
+                    green_nodes = spreads_message(green_nodes, bestmessage_r, player_b, intervals)
                 elif  (isinstance(player_a, red) and (non_player == True)):
-                    green_nodes = spreads_message(green_nodes, bestmessage_r, player_a)
+                    green_nodes = spreads_message(green_nodes, bestmessage_r, player_a, intervals)
 
                 
                 for g in green_nodes:
@@ -443,7 +439,7 @@ def simulation(grayPercent, intervals, num_rounds, vote_percent, player_a, playe
         elif r == "blue":
             if (isinstance(player_a, blue) and (non_player == False)):
                 # execute player interactive function
-                green_nodes, updated_gray = player_a.blue_player(green_nodes, grayPercent)
+                green_nodes, updated_gray = player_a.blue_player(green_nodes, grayPercent, intervals)
                 # if gray was used, update the gray perblue(grcentages (chances of realising a spy increases)
                 grayPercent = updated_gray
                 table_green = []
@@ -466,7 +462,7 @@ def simulation(grayPercent, intervals, num_rounds, vote_percent, player_a, playe
                 greenforever = []
                 for node in green_nodes:
                     greenforever.append(node.uncertainty)
-                bestmessage_b = minimax(green_nodes, graph, num_rounds, ai_copy, player_copy, grayPercent)[0]
+                bestmessage_b = minimax(green_nodes, graph, num_rounds, ai_copy, player_copy, grayPercent, intervals)[0]
                 # print("red:", player.uncertainty)
                 if isinstance(bestmessage_b, counterargument):
                     print(f"Blue chose: {bestmessage_b.type}\n")
@@ -477,7 +473,7 @@ def simulation(grayPercent, intervals, num_rounds, vote_percent, player_a, playe
                             green_nodes[i].opinion = 1
                         elif green_nodes[i].uncertainty <= 0:
                             green_nodes[i].opinion = 0
-                    green_nodes = spreads_message(green_nodes, bestmessage_b, player_b)
+                    green_nodes = spreads_message(green_nodes, bestmessage_b, player_b, intervals)
 
                 elif isinstance(bestmessage_b, gray):
                     print(f"Opponent chose to deploy a Gray agent!")
@@ -487,7 +483,7 @@ def simulation(grayPercent, intervals, num_rounds, vote_percent, player_a, playe
                             green_nodes[i].opinion = 1
                         elif green_nodes[i].uncertainty <= 0:
                             green_nodes[i].opinion = 0
-                    green_nodes, updated_gray, msg = bestmessage_b.deploy_grey(green_nodes, grayPercent)
+                    green_nodes, updated_gray, msg = bestmessage_b.deploy_grey(green_nodes, grayPercent, intervals)
                     if bestmessage_b.allegiance == "red":
                         print(f"Unfortunately it was a spy! It sent out {msg}\n\n")
                     else:

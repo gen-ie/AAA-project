@@ -14,7 +14,7 @@ class blue:
         self.unsureness = unsureness
         self.gray_percent = gray_percent
 
-    def blue_player(self, greens, gray_percent):
+    def blue_player(self, greens, gray_percent, intervals):
         while True:
             condition = input("would you like to send a direct message or use a gray agent (direct or gray)? ")
             if condition.strip().lower() in ['direct', 'gray']:
@@ -52,11 +52,11 @@ class blue:
                     self.energy = 0
                     return greens,gray_percent
                 else:
-                    updated_recursive_greens = self.blue(greens, gray_percent)
+                    updated_recursive_greens = self.blue(greens, gray_percent, intervals)
                     return updated_recursive_greens
 
             else: # spread message
-                updated_greens = self.spread_message(greens, message)
+                updated_greens = self.spread_message(greens, message, intervals[1])
                 self.energy = self.energy - message.energy_cost
                 print(f"Your message has been received. Your remaining energy is {self.energy}")
                 # for u in updated_greens:
@@ -66,7 +66,7 @@ class blue:
         else:
             unsureness, allegiance = self.create_gray(gray_percent)
             gray_agent = gray(unsureness, allegiance)
-            greens, gray_p, msg = gray_agent.deploy_grey(greens, gray_percent) 
+            greens, gray_p, msg = gray_agent.deploy_grey(greens, gray_percent, intervals) 
             print("\nBlue chose to deploy Gray!")
             if gray_agent.allegiance == "red":
                 print(f"Unfortanetly, it was a spy! It has spread {msg}!")
@@ -126,14 +126,14 @@ class blue:
             z = 2
             return z
 
-    def spread_message(self, greenarray, counterargument):
+    def spread_message(self, greenarray, counterargument, extrm_interval):
         for node in greenarray:
             # unsureness of blue: blue can only shift nodes that have (self.unsureness * -1) or more
             # Example: lets say blue has an unsureness of 0.99, it can only persuade nodes with uncertainties -0.99 and above
             if (self.unsureness * -1) <= node.uncertainty:
                 node.uncertainty += counterargument.strength
-                if node.uncertainty > 1:
-                    node.uncertainty = 1    
+                if node.uncertainty > extrm_interval:
+                    node.uncertainty = extrm_interval    
                 if node.uncertainty > 0:
                     node.opinion = 1
                 elif node.uncertainty <= 0:

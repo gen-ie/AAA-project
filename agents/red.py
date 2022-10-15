@@ -16,7 +16,7 @@ class red:
     def __init__(self, uncertainty):
         self.uncertainty = uncertainty
     
-    def spread_misinformation(self, array_green, message):
+    def spread_misinformation(self, array_green, message, extrm_interval):
         num_interact = 0
         for green in array_green:
             # to determine which nodes red can interact with: take the absolute value of red as maximum uncertainty red can interact with
@@ -26,8 +26,8 @@ class red:
                 num_interact += 1
                 #change the uncertainty of node
                 green.uncertainty +=  message.potency
-                if green.uncertainty < -1:
-                    green.uncertainty = -1
+                if green.uncertainty < extrm_interval:
+                    green.uncertainty = extrm_interval
             # check updated opinion
             if green.uncertainty <= 0:
                 green.opinion = 0
@@ -68,7 +68,7 @@ class red:
         message = propaganda(persuasiveness_decrease, potency, type)
         return message
 
-    def red_player(self, green_nodes):
+    def red_player(self, green_nodes, intervals):
         print("You have a choice of five types of messages to send out:\n")
         print("1: Speech of Patriotism (Showcase your loyalty to sway people) - tame message") 
         print("2: Propaganda (Boast your accomplisments) - moderately tame message. Can affect a lot of people") 
@@ -93,7 +93,7 @@ class red:
         print(f"You have chosen {message.type}!\n")
 
         # spread message
-        updated_nodes, num_interact = self.spread_misinformation(green_nodes, message)
+        updated_nodes, num_interact = self.spread_misinformation(green_nodes, message, intervals[0])
         print(f"You have interacted with {num_interact} nodes")
         print(f"Updated uncertainty: {self.uncertainty}\n")
         return updated_nodes
