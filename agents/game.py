@@ -277,8 +277,8 @@ def initialise():
         print("Invalid output. Please try again\n")
 
     # if player wants to get involved
-    player_a = 0
-    player_b = 0
+    player_a = ""
+    player_b = ""
 
     if game.strip().lower()  == "y":
         while True:
@@ -286,9 +286,9 @@ def initialise():
             if player_a.strip().lower() in ["r", "b"]:
                 break
             print("Invalid output. Please try again\n")
-    
-        player_b = "b"  
+      
         if player_a.strip().lower() == "r":
+            player_b = "b"
             print("\nYou are a red agent! Your job is to spread chaos.\n")
             print("You have a choice of five types of messages to send out:\n")
             print("1: Speech of Patriotism (Showcase your loyalty to sway people) - tame message") 
@@ -302,6 +302,12 @@ def initialise():
         if player_a.strip().lower() == "b":
             player_b = "r"
             print("\nYou are a blue agent! Your job is stop red from doing its nefarious schemes. To win the game, you must fight back red's\nadvances. Make sure everyone knows the truths.Make sure everyone knows the truth, and are confindent of their votes.\n")
+            print("1: Unifying Speech  (Remind people of the truth and democratic values) - tame message") 
+            print("2: Mass-reporting (Reporting of social media accounts that deliberately spread misinformation) - moderately tame message") 
+            print("3: Debunking and Fact-checking (Calling out false information with information from proper sources) - moderately effective message") 
+            print("4: Law implementation on misinformation") 
+            print("5: Democratic rallies (Peaceful protests for preserving democratic values) - powerful message") 
+            print("\n")
 
     # if player does not want to get involved
     elif game.strip().lower()  == "n":
@@ -353,6 +359,7 @@ def initialise():
             
     # start simulation
     # player and ai will have their own colors
+    print(player_a, player_b)
     simulation(float(grayPercent), [float(min_interval), float(max_interval)], int(num_rounds), float(vote_percent), player_a, player_b)
 
 
@@ -376,15 +383,20 @@ def simulation(grayPercent, intervals, num_rounds, vote_percent, player_a, playe
         player_b = blue(70, round(random.uniform(0.95, 1), 2), grayPercent)
         non_player = False
 
+    elif player_a == "b":
+        player_a = blue(70, round(random.uniform(0.95, 1), 2), grayPercent)
+        player_b = red(round(random.uniform(-0.95, -1), 2))
+        non_player = False
+
     elif (player_a == "r_ai") and (player_b == "b_ai"):
         player_a = red(round(random.uniform(-0.95, -1), 2))
         player_b = blue(70, round(random.uniform(0.95, 1), 2), grayPercent)
         non_player = True
-    else:
-        player_b = blue(70, round(random.uniform(0.95, 1), 2), grayPercent)
-        player_a = red(round(random.uniform(-0.95, -1), 2))
-        non_player = False
 
+
+
+    print(type(player_a))
+    print(type(player_b))
 
     # THE ACTUAL SIMULATION
     curr_round = 0
@@ -404,7 +416,7 @@ def simulation(grayPercent, intervals, num_rounds, vote_percent, player_a, playe
                 # print number of followers
                 print("STATE OF NODES AFTER RED TURN")
                 for g in green_nodes:
-                    print(round(g.uncertainty, 2), g.opinion)
+                    print(round(g.uncertainty, 2), "\t", g.opinion)
                 print("\n")
                 greenstats(green_nodes)
 
@@ -442,7 +454,7 @@ def simulation(grayPercent, intervals, num_rounds, vote_percent, player_a, playe
 
                 print("STATE OF NODES AFTER RED TURN")
                 for g in green_nodes:
-                    print(round(g.uncertainty, 2), g.opinion)
+                    print(round(g.uncertainty, 2), "\t", g.opinion)
                 print("\n")
                 greenstats(green_nodes)
             # print percentage of people wanting to vote/ against voting
@@ -456,7 +468,7 @@ def simulation(grayPercent, intervals, num_rounds, vote_percent, player_a, playe
 
                 print("STATE OF NODES AFTER BLUE/GRAY TURN")
                 for g in green_nodes:
-                    print(round(g.uncertainty,2), g.opinion)
+                    print(round(g.uncertainty,2),"\t", g.opinion)
                 #print remaining energy
                 # print(tabulate(table_green, headers=["updated uncertainty", "opinion"]))
                 print("\n")
@@ -503,7 +515,7 @@ def simulation(grayPercent, intervals, num_rounds, vote_percent, player_a, playe
 
                 print("STATE OF NODES AFTER BLUE/GRAY TURN")
                 for g in green_nodes:
-                    print(round(g.uncertainty, 2), g.opinion)
+                    print(round(g.uncertainty, 2), "\t", g.opinion)
                 print("\n")
                 greenstats(green_nodes)
 
@@ -511,7 +523,7 @@ def simulation(grayPercent, intervals, num_rounds, vote_percent, player_a, playe
             green_nodes = interact(graph, green_nodes)
             print("STATE OF NODES AFTER GREEN INTERACTIONS")
             for g in green_nodes:
-                print(round(g.uncertainty, 2), g.opinion)
+                print(round(g.uncertainty, 2), "\t", g.opinion)
             print("\n")
             print(f"STATE OF NODES AFTER ROUND {curr_round}")
             greenstats(green_nodes)
