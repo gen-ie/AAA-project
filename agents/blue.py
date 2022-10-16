@@ -75,12 +75,13 @@ class blue:
             return greens, gray_p 
 
     def create_gray(self, gray_percent):
-        stance = ['blue', 'red']
-        allegiance = random.choices(stance, weights=[gray_percent*10, (1-gray_percent)*10], k=10)
+        stances = (['blue']*gray_percent*10) + (['red']*(1-gray_percent)*10)
+        random.shuffle(stances)
+        allegiance = random.choice(stances)
         unsureness = round(random.uniform(0.95, 1), 2)
-        if allegiance[0] == "red":
+        if allegiance == "red":
             unsureness *= -1
-        return unsureness, allegiance[0]
+        return unsureness, allegiance
 
     def create_counterargument(self, choice):
         energy_cost = 0

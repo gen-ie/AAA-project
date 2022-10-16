@@ -1,13 +1,20 @@
+#%%
 import random
 import sys
 import csv
-from tabulate import tabulate
+import matplotlib.pyplot as plt
 
 sys.path.append(".")
 from green import green
 from red import *
 from blue import *
 from gray import *
+
+# CREATE VISUALS
+def plot_green(green_nodes):
+    green_unc = [g.uncertainty for g in green_nodes]
+    plt.hist(green_unc)
+    plt.show()
 
 # CREATION OF GRAPH/NODES
 def create_nodes(num_nodes, vote_percent, intervals): # returns an array of green nodes
@@ -87,6 +94,13 @@ def isStalemate(green_nodes, intervals):
             return False
     return True
 
+def count_followers(red, green_nodes):
+    count = 0
+    for g in green_nodes:
+        if abs(red.uncertainty) > g.uncertainty:
+            count += 1
+    return count
+
 def minimax(green_nodes, graph, num_rounds, agent, opp_ply, gray_percent, intervals):
     # end game condition: if all rounds have been iterated, or red has lost all followers, or red has full control of the population
     # return message type and overall opinion
@@ -164,6 +178,7 @@ def minimax(green_nodes, graph, num_rounds, agent, opp_ply, gray_percent, interv
     return msg_type, overall_opinion
 
 
+
 # WINNING/LOSING 
 def winning(greenarray, red_agent, blue_agent):
     # if swapped...
@@ -172,7 +187,7 @@ def winning(greenarray, red_agent, blue_agent):
         blue_agent = red_agent
         red_agent = temp    
     # abs(red_agent.uncertainty) returns the maximum uncertainty red can interact with
-    return (greenpercentstats(greenarray) == 100) or (greenpercentstats(greenarray) == 0) or (abs(red_agent.uncertainty) < get_most_uncertain(greenarray)) or (blue_agent.energy < 0)
+    return (greenpercentstats(greenarray) == 100) or (greenpercentstats(greenarray) == 0) or ((abs(red_agent.uncertainty) < get_most_uncertain(greenarray)) or (red_agent.uncertainty >= 0)) or (blue_agent.energy < 0)
 
 def greenabsolutemajoritycheck(greenarray):
     if (greenpercentstats(greenarray) == 100):
@@ -213,14 +228,11 @@ def influence(node1, node2):    #Takes a node pair instance and causes an intera
         influenced = influenced.change_uncertainty(influenced, value_change)
     elif influencer.opinion == 0:
         influenced = influenced.change_uncertainty(influenced, value_change * -1)
-    # print(node1.uncertainty, node2.uncertainty)
-    # print(influenced.uncertainty, influencer.uncertainty)
     return influenced, influencer
 
 def interact(graph, green_array):    #Acts as green's "turn" when all adjacent green nodes interact with one another [0 1,2,3,4,8] 0-1 0-2 0-3 0-4 [5,6,7]
     #DFS through the graph
     visited = []
-    # greenpairs = self.DFS(graph, visited, 0, green_array)
     #node pairs influence each other
     for n1 in graph:
         visited.append(n1) 
@@ -268,7 +280,7 @@ def spreads_message(greenarray, message, agent, intervals):
 # GAME START-UP
 def initialise():
     # welcome message
-    print("\nWelcome to the Politics Simulator!! Here we have two political groups, red and blue, fighting for dominance in an all out battle to win the people's hearts! **kyaah!**\n")
+    print("\nWelcome to Red and Blue teams simulator. Both teams goal is to influence the decision of the Greens before election day arrives to either vote or not vote. \n")
 
     while True:
         game = input("Do you want to participate as one of the groups in this game (y or n): ")
@@ -364,18 +376,22 @@ def initialise():
 
 
 def simulation(grayPercent, intervals, num_rounds, vote_percent, player_a, player_b): 
+    print(f"\nPercentage of gray agents allied to blue: {grayPercent}")
+    print(f"Intervals: {intervals[0]} to {intervals[1]}")
+    print(f"Number of days before Election day: {num_rounds}")
+    print(f"Percentage of green who want to vote: {vote_percent}\n")
+
     rounds = ["red", "blue", "green"] * num_rounds
     # create graph
     graph, num_nodes = create_graph("network-2.csv")
 
     # create array of green nodes
     green_nodes = create_nodes(len(num_nodes), vote_percent, intervals)
-    for g in green_nodes:
-        print('Initial:', g.uncertainty, g.opinion)
-    print("\n")
-    greenstats(green_nodes)
     # for g in green_nodes:
-    #     print(g.uncertainty, g.opinion)
+    #     print('Initial:', g.uncertainty, g.opinion)
+    # print("\n")
+    plot_green(green_nodes)
+    greenstats(green_nodes)
 
     # create agents
     if player_a == "r":
@@ -392,11 +408,6 @@ def simulation(grayPercent, intervals, num_rounds, vote_percent, player_a, playe
         player_a = red(round(random.uniform(-0.95, -1), 2))
         player_b = blue(70, round(random.uniform(0.95, 1), 2), grayPercent)
         non_player = True
-
-
-
-    print(type(player_a))
-    print(type(player_b))
 
     # THE ACTUAL SIMULATION
     curr_round = 0
@@ -415,9 +426,10 @@ def simulation(grayPercent, intervals, num_rounds, vote_percent, player_a, playe
                 green_nodes = player_a.red_player(green_nodes, intervals)
                 # print number of followers
                 print("STATE OF NODES AFTER RED TURN")
-                for g in green_nodes:
-                    print(round(g.uncertainty, 2), "\t", g.opinion)
-                print("\n")
+                # for g in green_nodes:
+                #     print(round(g.uncertainty, 2), "\t", g.opinion)
+                # print("\n")
+                plot_green(green_nodes)
                 greenstats(green_nodes)
 
             elif (isinstance(player_b, red) and (non_player == False)) or (isinstance(player_a, red) and (non_player == True)):
@@ -426,12 +438,15 @@ def simulation(grayPercent, intervals, num_rounds, vote_percent, player_a, playe
                     ai_copy = red(player_b.uncertainty)
                     player_copy = blue(player_a.energy, player_a.unsureness, player_a.gray_percent)
                     print(f"Current uncertainty: {player_b.uncertainty}")
+                    count = count_followers(player_b, green_nodes)
+                    print(f"Current number of followers: {count}\n")
+
                 elif  (isinstance(player_a, red) and (non_player == True)):
                     ai_copy = red(player_a.uncertainty)
                     player_copy = blue(player_b.energy, player_b.unsureness, player_b.gray_percent)
                     print(f"Current uncertainty: {player_a.uncertainty}")
-
-                print(f"Current number of followers:")
+                    count = count_followers(player_a, green_nodes)
+                    print(f"Current number of followers: {count}\n")
 
                 # print(player_a.uncertainty)
                 greenforever = []
@@ -453,11 +468,11 @@ def simulation(grayPercent, intervals, num_rounds, vote_percent, player_a, playe
                     green_nodes = spreads_message(green_nodes, bestmessage_r, player_a, intervals)
 
                 print("STATE OF NODES AFTER RED TURN")
-                for g in green_nodes:
-                    print(round(g.uncertainty, 2), "\t", g.opinion)
-                print("\n")
+                # for g in green_nodes:
+                #     print(round(g.uncertainty, 2), "\t", g.opinion)
+                # print("\n")
+                plot_green(green_nodes)
                 greenstats(green_nodes)
-            # print percentage of people wanting to vote/ against voting
         
         elif r == "blue":
             if (isinstance(player_a, blue) and (non_player == False)):
@@ -467,11 +482,10 @@ def simulation(grayPercent, intervals, num_rounds, vote_percent, player_a, playe
                 grayPercent = updated_gray
 
                 print("STATE OF NODES AFTER BLUE/GRAY TURN")
-                for g in green_nodes:
-                    print(round(g.uncertainty,2),"\t", g.opinion)
-                #print remaining energy
-                # print(tabulate(table_green, headers=["updated uncertainty", "opinion"]))
-                print("\n")
+                # for g in green_nodes:
+                #     print(round(g.uncertainty,2),"\t", g.opinion)
+                # print("\n")
+                plot_green(green_nodes)
                 greenstats(green_nodes)
 
             elif isinstance(player_b, blue):
@@ -509,23 +523,25 @@ def simulation(grayPercent, intervals, num_rounds, vote_percent, player_a, playe
                             green_nodes[i].opinion = 0
                     green_nodes, updated_gray, msg = bestmessage_b.deploy_grey(green_nodes, grayPercent, intervals)
                     if bestmessage_b.allegiance == "red":
-                        print(f"Unfortunately it was a spy! It sent out {msg}\n\n")
+                        print(f"Unfortunately it was a spy! It sent out {msg}\n")
                     else:
-                        print(f"Gray gives blue a hand! It carried out {msg}\n\n")
+                        print(f"Gray gives blue a hand! It carried out {msg}\n")
 
                 print("STATE OF NODES AFTER BLUE/GRAY TURN")
-                for g in green_nodes:
-                    print(round(g.uncertainty, 2), "\t", g.opinion)
-                print("\n")
+                # for g in green_nodes:
+                #     print(round(g.uncertainty, 2), "\t", g.opinion)
+                # print("\n")
+                plot_green(green_nodes)
                 greenstats(green_nodes)
 
         elif r == "green":
             green_nodes = interact(graph, green_nodes)
             print("STATE OF NODES AFTER GREEN INTERACTIONS")
-            for g in green_nodes:
-                print(round(g.uncertainty, 2), "\t", g.opinion)
-            print("\n")
+            # for g in green_nodes:
+            #     print(round(g.uncertainty, 2), "\t", g.opinion)
+            # print("\n")
             print(f"STATE OF NODES AFTER ROUND {curr_round}")
+            plot_green(green_nodes)
             greenstats(green_nodes)
 
             # while True:
@@ -566,3 +582,4 @@ def simulation(grayPercent, intervals, num_rounds, vote_percent, player_a, playe
 # create_graph("network-2.csv", [*range(25)])
 initialise()
 
+# %%
