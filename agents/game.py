@@ -81,6 +81,12 @@ def get_most_uncertain(greenarray):
             uncertain = g.uncertainty
     return uncertain
 
+def isStalemate(green_nodes, intervals):
+    for g in green_nodes:
+        if g.uncertainty not in intervals:
+            return False
+    return True
+
 def minimax(green_nodes, graph, num_rounds, agent, opp_ply, gray_percent, intervals):
     # end game condition: if all rounds have been iterated, or red has lost all followers, or red has full control of the population
     # return message type and overall opinion
@@ -100,7 +106,7 @@ def minimax(green_nodes, graph, num_rounds, agent, opp_ply, gray_percent, interv
     elif isinstance(agent, blue) and (agent.energy < 0):
         # blue loses all of its energy, red wins
         return None, 0
-    elif num_rounds == 0:
+    elif (num_rounds == 0) or (isStalemate(green_nodes, intervals)):
         #print("correct")
         return None, greenpercentstats(green_nodes)
 
@@ -114,6 +120,7 @@ def minimax(green_nodes, graph, num_rounds, agent, opp_ply, gray_percent, interv
             green_node_copy = green_nodes.copy()
             updated_nodes = agent.spread_misinformation(green_node_copy, p, intervals[0])[0]
             opinion_post_spread = minimax(updated_nodes, graph, num_rounds-1, opp_ply, agent, gray_percent, intervals)[1]
+            # print(type(opinion_post_spread))
             #print("red change:", opinion_post_spread[0], opinion_post_spread[1])
             if opinion_post_spread < overall_opinion:
                 msg_type = p
@@ -132,7 +139,6 @@ def minimax(green_nodes, graph, num_rounds, agent, opp_ply, gray_percent, interv
                 if message_types[i].energy_cost >= agent.energy:
                     messageinvalid.append(message_types[i]) 
         for mes in messageinvalid:
-            print(f"deleted = {mes.type}")
             message_types.remove(mes)
 
         for m in message_types:
@@ -149,6 +155,7 @@ def minimax(green_nodes, graph, num_rounds, agent, opp_ply, gray_percent, interv
             # green interaction after blue's turn
             updated_nodes = interact(graph, updated_nodes)
             opinion_post_spread = minimax(updated_nodes, graph, num_rounds-1, opp_ply, agent, gray_p, intervals)[1]
+            # print(type(opinion_post_spread))
             # print("blue change:", opinion_post_spread[0], opinion_post_spread[1])
             if opinion_post_spread > overall_opinion:
                 msg_type = m
@@ -273,7 +280,7 @@ def initialise():
     player_a = 0
     player_b = 0
 
-    if game == "y":
+    if game.strip().lower()  == "y":
         while True:
             player_a = input("Please choose an agent (r or b): ")
             if player_a.strip().lower() in ["r", "b"]:
@@ -297,7 +304,7 @@ def initialise():
             print("\nYou are a blue agent! Your job is stop red from doing its nefarious schemes. To win the game, you must fight back red's\nadvances. Make sure everyone knows the truths.Make sure everyone knows the truth, and are confindent of their votes.\n")
 
     # if player does not want to get involved
-    elif game == "n":
+    elif game.strip().lower()  == "n":
         player_a = "r_ai"
         player_b = "b_ai"
 
@@ -378,22 +385,26 @@ def simulation(grayPercent, intervals, num_rounds, vote_percent, player_a, playe
         player_a = red(round(random.uniform(-0.95, -1), 2))
         non_player = False
 
+
+    # THE ACTUAL SIMULATION
+    curr_round = 0
     for r in rounds:
         # check if blue ran out of energy or red ran out of followers
-        if winning(green_nodes, player_a, player_b):
-            # return name of winning agent 
+        if winning(green_nodes, player_a, player_b) or isStalemate(green_nodes, intervals):
+            if isStalemate(green_nodes, intervals):
+                print("\nBoth red and blue are in stalemate!\n")
             break
             
-        # else:
+        print(f"ROUND {curr_round} - {r}\n")
         if r == "red":
             if (isinstance(player_a, red) and (non_player == False)):
                 # execute player interactive function
                 #print("red before:", player.uncertainty)
                 green_nodes = player_a.red_player(green_nodes, intervals)
                 # print number of followers
-                # print("red uncertainty After:", player.uncertainty)
+                print("STATE OF NODES AFTER RED TURN")
                 for g in green_nodes:
-                    print('After red:', round(g.uncertainty, 2), g.opinion)
+                    print(round(g.uncertainty, 2), g.opinion)
                 print("\n")
                 greenstats(green_nodes)
 
@@ -416,7 +427,7 @@ def simulation(grayPercent, intervals, num_rounds, vote_percent, player_a, playe
                     greenforever.append(node.uncertainty)
                 bestmessage_r = minimax(green_nodes, graph, num_rounds, ai_copy, player_copy, grayPercent, intervals)[0]
                 # print(player_b.uncertainty)
-                print(f"Red chose: {bestmessage_r.type}")
+                print(f"Red chose: {bestmessage_r.type}\n")
                 for i in range(len(green_nodes)):
                     green_nodes[i].uncertainty = greenforever[i]  
                     if green_nodes[i].uncertainty > 0:
@@ -429,9 +440,9 @@ def simulation(grayPercent, intervals, num_rounds, vote_percent, player_a, playe
                 elif  (isinstance(player_a, red) and (non_player == True)):
                     green_nodes = spreads_message(green_nodes, bestmessage_r, player_a, intervals)
 
-                
+                print("STATE OF NODES AFTER RED TURN")
                 for g in green_nodes:
-                    print('After red:', round(g.uncertainty, 2), g.opinion)
+                    print(round(g.uncertainty, 2), g.opinion)
                 print("\n")
                 greenstats(green_nodes)
             # print percentage of people wanting to vote/ against voting
@@ -442,11 +453,12 @@ def simulation(grayPercent, intervals, num_rounds, vote_percent, player_a, playe
                 green_nodes, updated_gray = player_a.blue_player(green_nodes, grayPercent, intervals)
                 # if gray was used, update the gray perblue(grcentages (chances of realising a spy increases)
                 grayPercent = updated_gray
-                table_green = []
+
+                print("STATE OF NODES AFTER BLUE/GRAY TURN")
                 for g in green_nodes:
-                    table_green.append([round(g.uncertainty,2), g.opinion])
+                    print(round(g.uncertainty,2), g.opinion)
                 #print remaining energy
-                print(tabulate(table_green, headers=["updated uncertainty", "opinion"]))
+                # print(tabulate(table_green, headers=["updated uncertainty", "opinion"]))
                 print("\n")
                 greenstats(green_nodes)
 
@@ -489,17 +501,32 @@ def simulation(grayPercent, intervals, num_rounds, vote_percent, player_a, playe
                     else:
                         print(f"Gray gives blue a hand! It carried out {msg}\n\n")
 
+                print("STATE OF NODES AFTER BLUE/GRAY TURN")
                 for g in green_nodes:
-                    print('After blue/gray:', round(g.uncertainty, 2), g.opinion)
+                    print(round(g.uncertainty, 2), g.opinion)
                 print("\n")
                 greenstats(green_nodes)
 
         elif r == "green":
             green_nodes = interact(graph, green_nodes)
+            print("STATE OF NODES AFTER GREEN INTERACTIONS")
             for g in green_nodes:
-                print('After interaction:', round(g.uncertainty, 2), g.opinion)
+                print(round(g.uncertainty, 2), g.opinion)
             print("\n")
+            print(f"STATE OF NODES AFTER ROUND {curr_round}")
             greenstats(green_nodes)
+
+            # while True:
+            #     cont = input("\ncontinue (y or n)? ")
+            #     if cont.strip().lower() in ["y", "n"]:
+            #         break
+            #     print("Invalid output. Please try again\n")
+
+            # if cont.strip().lower() == "n":
+            #     break
+            # elif cont.strip().lower() == "y":
+                # increment round
+            curr_round += 1
             
     if bluedeathcheck(player_a, player_b):
         print(f"Blue has lost all hope to combat red. Red wins!!\n")
