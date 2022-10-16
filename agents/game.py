@@ -3,6 +3,7 @@ import random
 import sys
 import csv
 import matplotlib.pyplot as plt
+from pathlib import Path
 
 sys.path.append(".")
 from green import green
@@ -281,7 +282,15 @@ def spreads_message(greenarray, message, agent, intervals):
 def initialise():
     # welcome message
     print("\nWelcome to Red and Blue teams simulator. Both team's goal is to influence the opinions of the Green population, to either vote or not vote, before election day arrives. \n")
-
+     
+    while True:
+        path = input("Please insert node network csv file: ")
+        if "csv" in path:
+            path_f = Path(path)
+            if path_f.is_file():
+                break
+        print("No file found")
+    
     while True:
         game = input("Do you want to participate as one of the groups in this game (y or n): ")
         if game.strip().lower() in ["y", "n"]:
@@ -326,7 +335,7 @@ def initialise():
         player_a = "r_ai"
         player_b = "b_ai"
 
-    # validation of inputs
+    # validation of inputs     
     print("\nPlease state the following parameters")
     while True:
         grayPercent = input("Percentage of gray working for blue (between 0-1): ")
@@ -371,10 +380,10 @@ def initialise():
             
     # start simulation
     # player and ai will have their own colors
-    simulation(float(grayPercent), [float(min_interval), float(max_interval)], int(num_rounds), float(vote_percent), player_a, player_b)
+    simulation(csv_file, float(grayPercent), [float(min_interval), float(max_interval)], int(num_rounds), float(vote_percent), player_a, player_b)
 
 
-def simulation(grayPercent, intervals, num_rounds, vote_percent, player_a, player_b): 
+def simulation(csv_file, grayPercent, intervals, num_rounds, vote_percent, player_a, player_b): 
     print(f"\nPercentage of gray agents allied to blue: {grayPercent}")
     print(f"Intervals: {intervals[0]} to {intervals[1]}")
     print(f"Number of days before Election day: {num_rounds}")
@@ -382,7 +391,7 @@ def simulation(grayPercent, intervals, num_rounds, vote_percent, player_a, playe
 
     rounds = ["red", "blue", "green"] * num_rounds
     # create graph
-    graph, num_nodes = create_graph("network-2.csv")
+    graph, num_nodes = create_graph(csv_file)
 
     # create array of green nodes
     green_nodes = create_nodes(len(num_nodes), vote_percent, intervals)
