@@ -75,7 +75,7 @@ class blue:
             return greens, gray_p 
 
     def create_gray(self, gray_percent):
-        stances = (['blue']*gray_percent*10) + (['red']*(1-gray_percent)*10)
+        stances = (['blue']*int(gray_percent*10.0)) + (['red']*int((1-gray_percent)*10.0))
         random.shuffle(stances)
         allegiance = random.choice(stances)
         unsureness = round(random.uniform(0.95, 1), 2)

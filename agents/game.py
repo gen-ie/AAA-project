@@ -280,7 +280,7 @@ def spreads_message(greenarray, message, agent, intervals):
 # GAME START-UP
 def initialise():
     # welcome message
-    print("\nWelcome to Red and Blue teams simulator. Both teams goal is to influence the decision of the Greens before election day arrives to either vote or not vote. \n")
+    print("\nWelcome to Red and Blue teams simulator. Both team's goal is to influence the opinions of the Green population, to either vote or not vote, before election day arrives. \n")
 
     while True:
         game = input("Do you want to participate as one of the groups in this game (y or n): ")
