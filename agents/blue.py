@@ -26,10 +26,10 @@ class blue:
             print("Choose:\n")
 
             print("1: Unifying Speech") 
-            print("2: Mass-reporting") 
-            print("3: Debunking and Fact-checking") 
+            print("2: Mass-reporting(Reporting of social media accounts that deliberately spread misinformation) - moderately tame message") 
+            print("3: Debunking and Fact-checking (Calling out false information with information from proper sources) - moderately effective message") 
             print("4: Law implementation on misinformation") 
-            print("5: Democratic rallies") 
+            print("5: Democratic rallies (Peaceful protests for preserving democratic values) - powerful message") 
             print("\n")
 
             print(f"Current energy: {self.energy}\n")
