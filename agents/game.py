@@ -371,7 +371,6 @@ def initialise():
             
     # start simulation
     # player and ai will have their own colors
-    print(player_a, player_b)
     simulation(float(grayPercent), [float(min_interval), float(max_interval)], int(num_rounds), float(vote_percent), player_a, player_b)
 
 
@@ -396,17 +395,17 @@ def simulation(grayPercent, intervals, num_rounds, vote_percent, player_a, playe
     # create agents
     if player_a == "r":
         player_a = red(round(random.uniform(-0.95, -1), 2))
-        player_b = blue(70, round(random.uniform(0.95, 1), 2), grayPercent)
+        player_b = blue(30, round(random.uniform(0.95, 1), 2), grayPercent)
         non_player = False
 
     elif player_a == "b":
-        player_a = blue(70, round(random.uniform(0.95, 1), 2), grayPercent)
+        player_a = blue(30, round(random.uniform(0.95, 1), 2), grayPercent)
         player_b = red(round(random.uniform(-0.95, -1), 2))
         non_player = False
 
     elif (player_a == "r_ai") and (player_b == "b_ai"):
         player_a = red(round(random.uniform(-0.95, -1), 2))
-        player_b = blue(70, round(random.uniform(0.95, 1), 2), grayPercent)
+        player_b = blue(30, round(random.uniform(0.95, 1), 2), grayPercent)
         non_player = True
 
     # THE ACTUAL SIMULATION
