@@ -289,7 +289,7 @@ def initialise():
             path_f = Path(path)
             if path_f.is_file():
                 break
-        print("No file found")
+        print("No file found")      
     
     while True:
         game = input("Do you want to participate as one of the groups in this game (y or n): ")
