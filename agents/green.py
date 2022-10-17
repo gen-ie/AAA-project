@@ -1,3 +1,8 @@
+'''
+Genevie Caraan - 23070605
+Daniel Loo - 23157127
+'''
+
 class green:
 
     def __init__(self, id, uncertainty, opinion):   #Initialises green node

@@ -1,3 +1,7 @@
+'''
+Genevie Caraan - 23070605
+Daniel Loo - 23157127
+'''
 #%%
 import random
 import sys
@@ -16,7 +20,7 @@ def plot_green(green_nodes):
     green_unc = [g.uncertainty for g in green_nodes]
     plt.hist(green_unc)
     plt.show()
-    
+
 
 # CREATION OF GRAPH/NODES
 def create_nodes(num_nodes, vote_percent, intervals): # returns an array of green nodes

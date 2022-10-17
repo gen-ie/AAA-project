@@ -1,3 +1,7 @@
+'''
+Genevie Caraan - 23070605
+Daniel Loo - 23157127
+'''
 
 class propaganda:
     def __init__(self, follower_lose, potency, type):

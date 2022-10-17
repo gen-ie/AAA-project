@@ -1,3 +1,8 @@
+'''
+Genevie Caraan - 23070605
+Daniel Loo - 23157127
+'''
+
 import random
 
 class message:
