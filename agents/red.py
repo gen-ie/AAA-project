@@ -1,4 +1,3 @@
-import random
 
 class propaganda:
     def __init__(self, follower_lose, potency, type):

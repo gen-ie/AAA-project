@@ -1,6 +1,4 @@
 import random
-from red import *
-from blue import *
 
 class message:
     def __init__(self, allegiance, potency, type):

@@ -16,6 +16,7 @@ def plot_green(green_nodes):
     green_unc = [g.uncertainty for g in green_nodes]
     plt.hist(green_unc)
     plt.show()
+    
 
 # CREATION OF GRAPH/NODES
 def create_nodes(num_nodes, vote_percent, intervals): # returns an array of green nodes
@@ -116,13 +117,11 @@ def minimax(green_nodes, graph, num_rounds, agent, opp_ply, gray_percent, interv
     elif isinstance(agent, red) and ((abs(agent.uncertainty) < get_most_uncertain(green_nodes)) or (agent.uncertainty >= 0) ): 
         # red loses all followers, blue wins
         #print(agent.uncertainty)
-        #print("error")
         return None, 100
     elif isinstance(agent, blue) and (agent.energy < 0):
         # blue loses all of its energy, red wins
         return None, 0
     elif (num_rounds == 0) or (isStalemate(green_nodes, intervals)):
-        #print("correct")
         return None, greenpercentstats(green_nodes)
 
     # recursion starts here
@@ -552,16 +551,7 @@ def simulation(csv_file, grayPercent, intervals, num_rounds, vote_percent, playe
             plot_green(green_nodes)
             greenstats(green_nodes)
 
-            # while True:
-            #     cont = input("\ncontinue (y or n)? ")
-            #     if cont.strip().lower() in ["y", "n"]:
-            #         break
-            #     print("Invalid output. Please try again\n")
-
-            # if cont.strip().lower() == "n":
-            #     break
-            # elif cont.strip().lower() == "y":
-                # increment round
+            # increment round
             curr_round += 1
             
     if bluedeathcheck(player_a, player_b):
@@ -587,7 +577,6 @@ def simulation(csv_file, grayPercent, intervals, num_rounds, vote_percent, playe
     else:
         print(f"It's a draw\n")
 
-# create_graph("network-2.csv", [*range(25)])
 initialise()
 
 # %%
