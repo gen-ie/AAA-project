@@ -380,7 +380,7 @@ def initialise():
             
     # start simulation
     # player and ai will have their own colors
-    simulation(csv_file, float(grayPercent), [float(min_interval), float(max_interval)], int(num_rounds), float(vote_percent), player_a, player_b)
+    simulation(path_f, float(grayPercent), [float(min_interval), float(max_interval)], int(num_rounds), float(vote_percent), player_a, player_b)
 
 
 def simulation(csv_file, grayPercent, intervals, num_rounds, vote_percent, player_a, player_b): 
